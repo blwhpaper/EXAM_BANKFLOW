@@ -1,0 +1,52 @@
+﻿exam_id,folder_name,status,original_folder,q,a,qa,pdf_q,pdf_a,pdf_qa,audio
+E001,E001_2025_河南开封市_期末_高三_英语,OK_Q_QA,00b28d2f-c00f-4163-b41d-662ea357909d/00b28d2f-c00f-4163-b41d-662ea357909d,Q_原卷.docx,,QA_解析版.docx,,,,
+E002,E002_2025_河南2月测评_期末_高三_英语,OK_Q_QA,0132a410-0eea-46f7-8b82-8c35252335f2/0132a410-0eea-46f7-8b82-8c35252335f2,Q_原卷.docx,,QA_解析版.docx,,,,
+E003,E003_2026_26潍坊_一模_高三_英语,OK_PDF_QA,0ca23fa9-1e93-4388-8858-254259dea5e6/0ca23fa9-1e93-4388-8858-254259dea5e6,,,,,PDF_A_答案.pdf,PDF_QA_含答案.pdf,
+E005,E005_2026_河北衡水市1月_期末_高三_英语,ORPHAN_Q,16933446-d493-453e-bd67-8108d68df104/16933446-d493-453e-bd67-8108d68df104,Q_原卷_1.docx | Q_原卷_2.docx,,,,,,AUDIO_听力.mp3
+E006,E006_2025_福建福州市福州第一中学_开学考_高三_英语,OK_Q_QA,1cef187e-2d12-400e-8fa9-5c772de256e2/1cef187e-2d12-400e-8fa9-5c772de256e2,Q_原卷.docx,,QA_解析版.docx,PDF_Q_试卷.pdf,,,
+E007,E007_2025_哈三中度学年第一次验收_考试_高三_英语,OK_PDF_Q_PDF_A,281399c3-d388-436a-a9ac-9ba3d96ffc6f/281399c3-d388-436a-a9ac-9ba3d96ffc6f,,,,PDF_Q_试卷.pdf,PDF_A_答案.pdf,,AUDIO_听力.mp3
+E008,E008_2025_四川成都市第七中学度二诊_模拟考试_高三_英语,OK_Q_QA,2c9d0d13-bae7-4716-a8a3-40a31901aac0/2c9d0d13-bae7-4716-a8a3-40a31901aac0,Q_原卷.docx,,QA_解析版.docx,,,,AUDIO_听力.mp3
+E009,E009_2026_26一Y_月考_高三_英语,OK_Q_A,30d3d1d8-0e34-43b9-b7c6-cc64b80eae8c/30d3d1d8-0e34-43b9-b7c6-cc64b80eae8c,Q_原卷.docx,A_答案.docx,,,,,
+E010,E010_2025_福建厦门双十中学_开学考_高三_英语,OK_Q_QA,310569c4-df4b-4a06-a72c-9dc36a9aa513/310569c4-df4b-4a06-a72c-9dc36a9aa513,Q_原卷.docx,,QA_解析版.docx,,,,
+E011,E011_2025_8月初_开学考_高三_英语,OK_Q_A,34dbb6b9-f692-4ba3-9879-8c114f22b43f/34dbb6b9-f692-4ba3-9879-8c114f22b43f,Q_原卷.docx,A_答案.docx,,,,,AUDIO_听力.mp3
+E012,E012_2026_湖北八校_一模_高三_英语,OK_Q_QA,37e9aad2-950b-4be4-a5f8-89a4f34f4c39/37e9aad2-950b-4be4-a5f8-89a4f34f4c39,Q_原卷.docx,,QA_解析版.docx,,,,
+E014,E014_2026_山东济南市山东实验中学第四次性_诊断考试_高三_英语,OK_Q_QA,39f7de75-81b2-4608-aeb5-720891976b62/39f7de75-81b2-4608-aeb5-720891976b62,Q_原卷.docx,,QA_解析版.docx,,,,
+E015,E015_2026_山东济南市山东实验中学第四次性_诊断考试_高三_英语,OK_Q_QA,39f7de75-81b2-4608-aeb5-720891976b62 (1)/39f7de75-81b2-4608-aeb5-720891976b62 (1),Q_原卷.docx,,QA_解析版.docx,,,,
+E016,E016_2026_江西省景德镇_一模_高三_英语,OK_Q_QA,3b2708a9-e7b3-4fc9-9c16-8e4b9e56f4e7/3b2708a9-e7b3-4fc9-9c16-8e4b9e56f4e7,Q_原卷.docx,,QA_解析版.docx,,,,
+E017,E017_2025_江苏无锡市2月_期末_高三_英语,OK_Q_QA,3d210542-906b-4b2d-9ada-d7a0bbc38440/3d210542-906b-4b2d-9ada-d7a0bbc38440,Q_原卷.docx,,QA_解析版.docx,,,,
+E018,E018_2026_江苏南通市_一模_高三_英语,OK_Q_QA,3d658845-a511-4490-a5a2-32d0cf7a8808/3d658845-a511-4490-a5a2-32d0cf7a8808,Q_原卷.docx,,QA_解析版.docx,PDF_Q_试卷_1.pdf | PDF_Q_试卷_2.pdf,,,AUDIO_听力.mp3
+E019,E019_2026_浙江台州_一模_高三_英语,OK_Q_QA,40fe2d8f-1c24-4e1b-81f9-963a263a1efa/40fe2d8f-1c24-4e1b-81f9-963a263a1efa,Q_原卷.docx,,QA_解析版.docx,,,,
+E021,E021_2026_湖北湖北部分市州9月_一模_高三_英语,OK_Q_QA,438f5d0f-8013-49f0-88ca-8d4091b35714/438f5d0f-8013-49f0-88ca-8d4091b35714,Q_原卷.docx,,QA_解析版.docx,,,,
+E022,E022_2026_河北百师联盟_一模_高三_英语,OK_Q_QA,497efa87-5ee9-44c5-9525-891b727d772a/497efa87-5ee9-44c5-9525-891b727d772a,Q_原卷.docx,,QA_解析版.docx,,,,
+E023,E023_2026_湘一名校联盟3月_考试_高三_英语,OK_Q_A,49884619-7147-4177-bdd8-f205f6009975/49884619-7147-4177-bdd8-f205f6009975,Q_原卷.docx,A_答案.docx,,,,,AUDIO_听力.mp3
+E024,E024_2026_未知来源_考试_高三_英语,OK_Q_A,499aa624-4711-4d9b-98bc-0f257095c46a/499aa624-4711-4d9b-98bc-0f257095c46a,Q_原卷.docx,A_答案.docx,,,,,
+E025,E025_2025_广东深圳中学顺德一中松山湖未来学校中山纪念中学港澳班第一_联考_高三_英语,OK_Q_QA,511b6ab0-a3c1-44ac-b83f-537efd702255/511b6ab0-a3c1-44ac-b83f-537efd702255,Q_原卷.docx,,QA_解析版.docx,,,,AUDIO_听力.mp3
+E026,E026_2026_“贵百河”8月考+_摸底考_高三_英语,ORPHAN_A,521b61fe-5677-4dc3-9c98-1d06c624fa50/521b61fe-5677-4dc3-9c98-1d06c624fa50,,,,,PDF_A_答案.pdf,,AUDIO_听力.mp3
+E027,E027_2026_陕西高考二_适应性测试_高三_英语,OK_Q_QA,5b3e1d0d-0935-49b3-b02c-dfb19a6f5067/5b3e1d0d-0935-49b3-b02c-dfb19a6f5067,Q_原卷.docx,,QA_解析版.docx,,,,
+E028,E028_2026_山东济南市_一模_高三_英语,OK_Q_QA,5c55576d-0ace-40f9-83e5-64bcca23d018/5c55576d-0ace-40f9-83e5-64bcca23d018,Q_原卷.docx,,QA_解析版.docx,,,,
+E029,E029_2025_山西太原市学业_期末_高三_英语,OK_Q_QA,666121ef-5ef5-4ee1-9595-add3bbab7c09/666121ef-5ef5-4ee1-9595-add3bbab7c09,Q_原卷.docx,,QA_解析版.docx,,,,AUDIO_听力.mp3
+E030,E030_2026_江苏苏锡常镇教学情况一_调研_高三_英语,ORPHAN_Q,6a980894-ae34-4605-be21-f3e94122e177/6a980894-ae34-4605-be21-f3e94122e177,Q_原卷.docx,,,PDF_Q_试卷.pdf,,,AUDIO_听力.mp3
+E031,E031_2025_湖南长沙市雅礼中学_开学考_高三_英语,OK_Q_QA,76905aef-d5aa-490a-9a10-0166479a1a3f/76905aef-d5aa-490a-9a10-0166479a1a3f,Q_原卷.docx,,QA_解析版.docx,,,,
+E032,E032_2026_未知来源_考试_高三_英语,OK_PDF_Q_PDF_A,7be0dc66-2a50-4e60-8206-7ab2afdc5a45/7be0dc66-2a50-4e60-8206-7ab2afdc5a45,,,,PDF_Q_试卷.pdf,PDF_A_答案.pdf,,
+E033,E033_2026_湖北武汉市高中毕业生三月_调研_高三_英语,OK_Q_QA,8b831972-852e-4b76-8b09-fec574384e32/8b831972-852e-4b76-8b09-fec574384e32,Q_原卷.docx,,QA_解析版.docx,,,,AUDIO_听力.mp3
+E034,E034_2025_山东枣庄市薛城区_期中_高二_英语,OK_PDF_Q_PDF_A,9241b979-057f-4bc7-9edc-1f127d890ebd/9241b979-057f-4bc7-9edc-1f127d890ebd,,,,PDF_Q_试卷.pdf,PDF_A_答案.pdf,,
+E035,E035_2026_未知来源_考试_高三_英语,OK_Q_A,9945b129-1aef-4074-94bc-e05db98d49a3/9945b129-1aef-4074-94bc-e05db98d49a3,Q_原卷_1.docx | Q_原卷_2.docx,A_答案.docx,,,,,
+E036,E036_2025_湖南长沙市湖南师范大学附属中学8月_月考_高三_英语,OK_Q_PDF_A,9af6703b-b186-4032-a297-9798ae8ed801/9af6703b-b186-4032-a297-9798ae8ed801,Q_原卷.docx,,,,PDF_A_答案.pdf,,
+E037,E037_2026_231_开学考_高三_英语,OK_PDF_Q_A,a685d141-234a-4df9-b33e-3a990c4f83fa/a685d141-234a-4df9-b33e-3a990c4f83fa,,A_答案.docx,,PDF_Q_试卷_1.pdf | PDF_Q_试卷_2.pdf,,,
+E038,E038_2025_江苏苏州市度_期末_高三_英语,OK_Q_A_QA,a6a07bf4-8782-4e81-bd7d-50f3f0b0cb0c/a6a07bf4-8782-4e81-bd7d-50f3f0b0cb0c,Q_原卷_1.docx | Q_原卷_2.docx,A_答案.docx,QA_解析版.docx,,,,AUDIO_听力.mp3
+E039,E039_2026_广东深圳市第一次_调研_高三_英语,OK_Q_QA,ac5bff73-501b-49af-bf61-8194af1675ec/ac5bff73-501b-49af-bf61-8194af1675ec,Q_原卷.docx,,QA_解析版.docx,,,,
+E040,E040_2025_山东青岛市度学业水平检测_期末_高三_英语,OK_Q_QA,b80945a1-90a0-4fa5-a4fb-fe8992a09abc/b80945a1-90a0-4fa5-a4fb-fe8992a09abc,Q_原卷.docx,,QA_解析版.docx,,,,
+E041,E041_2025_山东聊城市11月_期中_高一_英语,OK_Q_A,c22c60b4-d876-4f89-8311-9531d6ff2aa6/c22c60b4-d876-4f89-8311-9531d6ff2aa6,Q_原卷.docx,A_答案.docx,,,,,
+E042,E042_2026_浙江浙江“9+1”联盟_一模_高三_英语,OK_Q_A,c357bc37-e9e8-4437-b994-45c9ac8d959c/c357bc37-e9e8-4437-b994-45c9ac8d959c,Q_原卷.docx,A_答案.docx,,,,,AUDIO_听力.mp3
+E043,E043_2026_浙江宁波市宁波五地_一模_高三_英语,OK_Q_QA,cfb5123d-a8bd-48c5-9e60-cb2627a71cb4/精品解析：2026届浙江省宁波市海曙区等5地高三一模英语试题,Q_原卷.docx,,QA_解析版.docx,,,,AUDIO_听力.mp3
+E044,E044_2025_湖南长沙市长郡中学_开学考_高三_英语,OK_Q_A,d066a0d4-b689-498c-9d1d-2ba50cf93bf1/【名校】湖南省长沙市长郡中学2025-2026学年高三上学期开学英语试题,Q_原卷.docx,A_答案.docx,,,,,
+E045,E045_2026_浙江温州市温州卷_一模_高三_英语,OK_Q_PDF_A,d7b2d58e-195d-432d-bbd6-0698be9319dc/d7b2d58e-195d-432d-bbd6-0698be9319dc,Q_原卷.docx,,,,PDF_A_答案.pdf,,AUDIO_听力.mp4
+E046,E046_2025_湖北襄阳市第五中学8月二_月考_高三_英语,OK_Q_QA,deace358-edc0-4c6d-823c-7ca2043dfeda/deace358-edc0-4c6d-823c-7ca2043dfeda,Q_原卷.docx,,QA_解析版.docx,,,,
+E047,E047_2026_湖南长沙市天心区长沙市长郡中学3月预测_模拟考试_高三_英语,OK_Q_PDF_A,ed5b049b-ced6-43ac-9a0b-8ce9cca2681b/ed5b049b-ced6-43ac-9a0b-8ce9cca2681b,Q_原卷.docx,,,PDF_Q_试卷.pdf,PDF_A_答案.pdf,,AUDIO_听力.mp3
+E048,E048_2026_重庆南开中学8月_开学考_高三_英语,OK_Q_PDF_A,ee703cd9-0d92-4628-a5f1-02da29ebc3f7/ee703cd9-0d92-4628-a5f1-02da29ebc3f7,Q_原卷.docx,,,,PDF_A_答案.pdf,,AUDIO_听力.mp3
+E049,E049_2026_湖北黄冈中学9月平行班同步考_考试_高三_英语,OK_Q_QA,ee9fbee5-2f09-4cae-9c99-5a89d7646349/ee9fbee5-2f09-4cae-9c99-5a89d7646349,Q_原卷_1.docx | Q_原卷_2.docx,,QA_解析版.docx,,,,
+E050,E050_2025_山东泰安市_期中_高三_英语,OK_Q_QA,f00ec287-1fc6-461e-8350-10545e0567d3/f00ec287-1fc6-461e-8350-10545e0567d3,Q_原卷.docx,,QA_解析版.docx,,,,
+E051,E051_2026_南京市外国语学校高中毕业班7月测评_摸底考_高三_英语,OK_Q_QA,f3c43949-8bcd-4d0c-a4b2-06bdcfe0bf81/f3c43949-8bcd-4d0c-a4b2-06bdcfe0bf81,Q_原卷.docx,,QA_解析版.docx,,,,AUDIO_听力.mp3
+E052,E052_2026_徐州市1月教学质量评估_考试_高三_英语,OK_Q_A,f85ac7ca-ae27-43b3-9b6d-30174207ffab/f85ac7ca-ae27-43b3-9b6d-30174207ffab,Q_原卷.docx,A_答案_1.docx | A_答案_2.docx,,,,,AUDIO_听力.mp3
+E053,E053_2025_江西师范大学附属中学_开学考_高三_英语,OK_Q_QA,fb19d1ef-7941-4c61-93c0-147b22cc5533/fb19d1ef-7941-4c61-93c0-147b22cc5533,Q_原卷.docx,,QA_解析版.docx,,,,
+E054,E054_2025_南京盐城度_期末_高三_英语,OK_Q_A,ff03e8c4-e101-4c0e-b264-13d527a4eafe/ff03e8c4-e101-4c0e-b264-13d527a4eafe,Q_原卷.docx,A_答案.docx,,,,,AUDIO_听力.mp3
