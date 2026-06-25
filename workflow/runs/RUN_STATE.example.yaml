@@ -1,22 +1,45 @@
 run_id: RUN-YYYYMMDD-001
 phase: "Phase 0｜Harness & Context Engineering"
-task_id: EXAM-HARNESS-001
+current_task: EXAM-HARNESS-001
+task_title: "基于审计结果落盘轻量 harness 骨架"
+status: completed
 dataset: datasets/2026_quyixian_english
 branch: task-exam-harness-001-lightweight-harness-skeleton
-inputs:
-  - workflow/audits/EXAM-HARNESS-000_REFERENCE_REPOS_AUDIT.md
-  - workflow/audits/EXAM-HARNESS-000_PATTERN_MATRIX.csv
-  - workflow/TASK_INDEX.md
-  - workflow/TASK_STATE.json
-outputs:
-  - workflow/context/WORKFLOW_OVERVIEW.md
-  - workflow/context/OPERATING_RULES.md
-checks:
-  - command: python3 -m json.tool workflow/TASK_STATE.json
-    result: pass
-  - command: git diff --check
-    result: pass
+work_unit: single_item
+input_scope:
+  summary: "Create the initial workflow harness skeleton without touching datasets."
+  files:
+    - workflow/audits/EXAM-HARNESS-000_REFERENCE_REPOS_AUDIT.md
+    - workflow/audits/EXAM-HARNESS-000_PATTERN_MATRIX.csv
+    - workflow/TASK_INDEX.md
+    - workflow/TASK_STATE.json
+  boundaries:
+    - "No dataset mutation."
+    - "No reference repo changes."
+output_scope:
+  summary: "Land the core workflow context, rules, templates, and agent notes."
+  files:
+    - workflow/context/WORKFLOW_OVERVIEW.md
+    - workflow/context/OPERATING_RULES.md
+validation:
+  status: pass
+  checks:
+    - command: python3 -m json.tool workflow/TASK_STATE.json
+      result: pass
+      evidence: "Valid JSON output."
+    - command: git diff --check
+      result: pass
+      evidence: "No whitespace or merge marker issues."
+  manual_review_points:
+    - "Confirm harness scope stays in Phase 0."
 decisions:
   - "Borrow structure from reference repositories without copying scaffold scripts."
   - "Keep Phase 0 focused on harness surfaces, not schema or cleaning logic."
-next_action: Prepare EXAM-HARNESS-002 templates and supporting validation conventions.
+handoff:
+  status: ready
+  summary: "Skeleton files landed and verified for Phase 0 use."
+  next_action: "Prepare EXAM-HARNESS-002 templates and supporting validation conventions."
+  blockers: []
+  files_to_read_next:
+    - workflow/TASK_INDEX.md
+    - workflow/TASK_STATE.json

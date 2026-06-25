@@ -1,9 +1,11 @@
 {
   "current_phase": "Phase 0｜Harness & Context Engineering",
-  "current_task": "EXAM-HARNESS-001",
+  "current_task": "EXAM-HARNESS-003",
   "completed_tasks": [
-    "EXAM-HARNESS-000"
+    "EXAM-HARNESS-000",
+    "EXAM-HARNESS-001",
+    "EXAM-HARNESS-002"
   ],
   "blocked_tasks": [],
-  "next_task": "EXAM-HARNESS-002"
+  "next_task": "EXAM-HARNESS-003"
 }
