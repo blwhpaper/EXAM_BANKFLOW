@@ -1,0 +1,98 @@
+# Minimum Validation Commands
+
+## Purpose
+
+These commands define the current minimum validation flow for harness tasks and future early `EXAM-CLEAN-*` tasks. Commands must be non-interactive and must not open editors such as `vi`.
+
+Run commands from the repository root:
+
+```sh
+cd /Users/apple/Projects/EXAM_BANKFLOW
+```
+
+## Repository State
+
+```sh
+git status --short
+```
+
+```sh
+git status --short --branch
+```
+
+## File Inventory
+
+```sh
+find workflow -maxdepth 3 -type f | sort
+```
+
+## JSON Readability
+
+```sh
+python3 -m json.tool workflow/TASK_STATE.json
+```
+
+For future structured JSON outputs:
+
+```sh
+python3 -m json.tool path/to/output.structured.json
+```
+
+## Basic Grep Checks
+
+Check that agent rules contain the required execution and safety language:
+
+```sh
+grep -n "Forbidden Actions" workflow/agents/AGENTS.md
+grep -n "Required Startup Flow" workflow/agents/AGENTS.md
+grep -n "Exception Handling" workflow/agents/AGENTS.md
+grep -n "Validation Expectations" workflow/agents/AGENTS.md
+```
+
+Check that validation docs name the required check families:
+
+```sh
+grep -n "schema checks" workflow/validation/README.md
+grep -n "required fields" workflow/validation/README.md
+grep -n "source trace" workflow/validation/README.md
+grep -n "duplicate.*question_id" workflow/validation/README.md
+grep -n "answer/explanation consistency" workflow/validation/README.md
+grep -n "output format" workflow/validation/README.md
+```
+
+Check task state and index references:
+
+```sh
+grep -n "EXAM-HARNESS-004" workflow/TASK_INDEX.md workflow/TASK_STATE.json workflow/Task_Closeouts/EXAM-HARNESS-004_Closeout.md
+grep -n "EXAM-CLEAN-001" workflow/TASK_INDEX.md workflow/TASK_STATE.json workflow/Task_Closeouts/EXAM-HARNESS-004_Closeout.md
+```
+
+## YAML Readability
+
+Ruby includes a standard YAML parser on common macOS developer systems:
+
+```sh
+ruby -e 'require "yaml"; YAML.load_file("workflow/schema/QUESTION_RECORD_SCHEMA.yaml"); puts "YAML readable: workflow/schema/QUESTION_RECORD_SCHEMA.yaml"'
+```
+
+If Ruby is unavailable, record:
+
+```text
+MANUAL_CHECK: YAML readability not automatically verified because no standard YAML parser was available in the active runtime.
+```
+
+Do not claim YAML schema validation has passed unless a real parser or future validator successfully reads the file.
+
+## Whitespace And Patch Safety
+
+```sh
+git diff --check
+```
+
+## Current Manual Checks
+
+- `MANUAL_CHECK`: confirm AGENTS.md rules are operational, not just broad principles.
+- `MANUAL_CHECK`: confirm no real exam data under `datasets/` changed during harness tasks unless explicitly authorized.
+- `MANUAL_CHECK`: confirm any future structured output keeps source trace for each exam, section, and question.
+- `MANUAL_CHECK`: confirm answer/explanation consistency when no automated validator exists.
+- `MANUAL_CHECK`: confirm image and table questions are traceable to assets or source spans before acceptance.

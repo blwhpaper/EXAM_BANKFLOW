@@ -17,7 +17,7 @@
 | EXAM-HARNESS-001 | 基于审计结果落盘轻量 harness 骨架 | DONE |
 | EXAM-HARNESS-002 | 建立任务模板、状态模板与交接模板 | DONE |
 | EXAM-HARNESS-003 | 建立题库数据 schema 与输出格式规范 | DONE |
-| EXAM-HARNESS-004 | 建立 Codex/Claude/GPT 开工规则与验收规则 | TODO |
+| EXAM-HARNESS-004 | 建立 Codex/Claude/GPT 开工规则与验收规则 | DONE |
 
 ## Phase 1｜Exam Cleaning Pipeline
 
