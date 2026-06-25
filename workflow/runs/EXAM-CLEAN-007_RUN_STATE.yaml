@@ -1,0 +1,63 @@
+task_id: EXAM-CLEAN-007
+task_title: question records validation hardening
+phase: Phase 1｜Exam Cleaning Pipeline
+branch: task-exam-clean-007-question-records-validation-hardening
+run_date: 2026-06-25
+status: DONE
+
+scope:
+  mode: validation_hardening
+  source_records:
+    - workflow/records/EXAM-CLEAN-006_QUESTION_RECORDS_SLICE.jsonl
+    - workflow/records/EXAM-CLEAN-004_READING_BLOCKS.jsonl
+  validator:
+    - workflow/validation/validate_question_records_slice.py
+  boundaries:
+    - no bulk question-record creation
+    - no OCR
+    - no schema framework rebuild
+    - no EXAM-CLEAN-006 record mutation
+    - preserve reading passage/block linkage requirements
+
+outputs:
+  updated_validator: workflow/validation/validate_question_records_slice.py
+  validation_docs:
+    - workflow/validation/README.md
+    - workflow/validation/MINIMUM_VALIDATION_COMMANDS.md
+  run_state: workflow/runs/EXAM-CLEAN-007_RUN_STATE.yaml
+  closeout: workflow/Task_Closeouts/EXAM-CLEAN-007_Closeout.md
+
+hardening_rules:
+  jsonl_parseable: true
+  required_fields_non_empty: true
+  unique_question_id: true
+  source_trace_fields_required: true
+  source_trace_status_enum_required: true
+  choice_options_a_to_d_required: true
+  answer_must_reference_option_labels: true
+  reading_block_reference_must_resolve: true
+  manual_review_note_consistency_required: true
+  third_party_dependencies: false
+
+validation:
+  status: PASS
+  checks:
+    - command: python3 workflow/validation/validate_question_records_slice.py workflow/records/EXAM-CLEAN-006_QUESTION_RECORDS_SLICE.jsonl
+      result: PASS question_records=3 manual_review=0 reading_questions=3 reading_blocks_indexed=2
+    - command: python3 workflow/validation/validate_reading_blocks.py workflow/records/EXAM-CLEAN-004_READING_BLOCKS.jsonl
+      result: PASS reading_blocks=2 questions=6
+    - command: python3 -m json.tool workflow/TASK_STATE.json >/dev/null
+      result: PASS
+    - command: git diff --check
+      result: PASS
+    - command: git status --short --branch
+      result: recorded in closeout
+
+handoff:
+  status: ready_for_review
+  summary: "Question-record slice validation now enforces provenance, option, answer, reading-block linkage, and manual-review consistency checks."
+  next_action: "Human review, then proceed to EXAM-CLEAN-008."
+  blockers: []
+  files_to_read_next:
+    - workflow/Task_Closeouts/EXAM-CLEAN-007_Closeout.md
+    - workflow/validation/validate_question_records_slice.py

@@ -4,7 +4,7 @@
 
 `workflow/validation/` is the home for validation notes, command interfaces, and future lightweight scripts used to check exam cleaning outputs. The directory is part of the harness. It should help agents and human reviewers verify structured outputs without mutating raw exam sources.
 
-This directory does not currently implement a full validator. Until future tasks add scripts, validation evidence must combine non-interactive shell commands and clearly labeled `MANUAL_CHECK` items.
+This directory does not implement a full repository-wide validator. Validation evidence must combine non-interactive shell commands, task-specific validators, and clearly labeled `MANUAL_CHECK` items where automation does not yet exist.
 
 ## Validation Command Interface
 
@@ -38,6 +38,21 @@ Future validators should cover at least:
 - objective-question option and answer-label checks
 - uncertainty marker checks for OCR damage, missing numbers, image/table dependencies, and source conflicts
 - forbidden-content checks for fabricated placeholders such as unexplained `unknown`, invented answers, or missing source spans
+
+## Current Executable Validators
+
+### EXAM-CLEAN-007 Question Records Hardening
+
+Run these commands from the repository root for every question-records slice before closeout:
+
+```sh
+python3 workflow/validation/validate_question_records_slice.py workflow/records/EXAM-CLEAN-006_QUESTION_RECORDS_SLICE.jsonl
+python3 workflow/validation/validate_reading_blocks.py workflow/records/EXAM-CLEAN-004_READING_BLOCKS.jsonl
+python3 -m json.tool workflow/TASK_STATE.json >/dev/null
+git diff --check
+```
+
+`validate_question_records_slice.py` checks JSONL parseability, required question/provenance fields, unique `question_id`, source trace status enums, complete A-D options for choice questions, answer-to-option consistency, reading block linkage against `workflow/records/EXAM-CLEAN-004_READING_BLOCKS.jsonl`, and manual-review note consistency.
 
 ## Minimum Current Stage
 

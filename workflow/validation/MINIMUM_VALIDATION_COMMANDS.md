@@ -38,6 +38,26 @@ For future structured JSON outputs:
 python3 -m json.tool path/to/output.structured.json
 ```
 
+## EXAM-CLEAN-007 Question Records Hardening
+
+For every question-records slice, run at least:
+
+```sh
+python3 workflow/validation/validate_question_records_slice.py workflow/records/EXAM-CLEAN-006_QUESTION_RECORDS_SLICE.jsonl
+```
+
+```sh
+python3 workflow/validation/validate_reading_blocks.py workflow/records/EXAM-CLEAN-004_READING_BLOCKS.jsonl
+```
+
+```sh
+python3 -m json.tool workflow/TASK_STATE.json >/dev/null
+```
+
+```sh
+git diff --check
+```
+
 ## Basic Grep Checks
 
 Check that agent rules contain the required execution and safety language:
