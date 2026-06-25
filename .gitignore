@@ -14,3 +14,6 @@ __pycache__/
 
 # office temp files
 ~$*
+
+# external reference repos
+_reference_repos/
