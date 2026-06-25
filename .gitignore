@@ -1,0 +1,16 @@
+# raw datasets
+datasets/*/_ORIGINAL_ZIPS/
+datasets/*/_ORIGINAL_EXTRACTED/
+datasets/*/_STANDARDIZED_EXAMS/
+
+# processed outputs
+datasets/*/_processed/
+exports/
+
+# system files
+.DS_Store
+__pycache__/
+*.pyc
+
+# office temp files
+~$*
