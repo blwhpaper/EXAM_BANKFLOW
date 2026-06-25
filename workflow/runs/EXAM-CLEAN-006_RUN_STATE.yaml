@@ -1,0 +1,44 @@
+task_id: EXAM-CLEAN-006
+task_title: question records 入库结构试切片
+phase: Phase 1｜Exam Cleaning Pipeline
+branch: task-exam-clean-006-question-records-slice
+run_date: 2026-06-25
+status: DONE
+
+scope:
+  mode: minimal_slice
+  source_records:
+    - workflow/records/EXAM-CLEAN-004_READING_BLOCKS.jsonl
+  selected_reading_blocks:
+    - e001-reading-a
+  selected_question_records:
+    - e001-reading-a-q1
+    - e001-reading-a-q2
+    - e001-reading-a-q3
+
+outputs:
+  question_records_jsonl: workflow/records/EXAM-CLEAN-006_QUESTION_RECORDS_SLICE.jsonl
+  cleaning_note: workflow/cleaning/EXAM-CLEAN-006_QUESTION_RECORDS_SLICE.md
+  validator: workflow/validation/validate_question_records_slice.py
+  closeout: workflow/Task_Closeouts/EXAM-CLEAN-006_Closeout.md
+
+field_policy:
+  preserve_passage_context: true
+  require_passage_id: true
+  require_block_id: true
+  require_passage_text_or_ref: true
+  require_options_a_to_d: true
+  require_answer_or_manual_review: true
+  require_source_trace_fields: true
+  require_manual_review_note: true
+
+manual_review:
+  count: 0
+  reasons: []
+
+validation:
+  commands:
+    - python3 workflow/validation/validate_question_records_slice.py workflow/records/EXAM-CLEAN-006_QUESTION_RECORDS_SLICE.jsonl
+  result: PASS question_records=3 manual_review=0
+
+next_task: EXAM-CLEAN-007
