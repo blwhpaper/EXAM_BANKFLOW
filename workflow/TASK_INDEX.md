@@ -29,7 +29,7 @@
 | EXAM-CLEAN-004 | 阅读理解结构化抽取 | DONE |
 | EXAM-CLEAN-005 | 阅读理解记录规范化与选项完整性修复 | DONE |
 | EXAM-CLEAN-006 | question records 入库结构试切片 | DONE |
-| EXAM-CLEAN-007 | 语法填空结构化抽取 | TODO |
+| EXAM-CLEAN-007 | question records validation hardening | DONE |
 | EXAM-CLEAN-008 | 写作题结构化抽取 | TODO |
 | EXAM-CLEAN-009 | 答案对齐 | TODO |
 | EXAM-CLEAN-010 | 结构化数据入库 | TODO |
