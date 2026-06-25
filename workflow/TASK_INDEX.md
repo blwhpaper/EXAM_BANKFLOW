@@ -14,7 +14,7 @@
 | ID | Task | Status |
 |---|---|---|
 | EXAM-HARNESS-000 | Top 5 参考仓库本地审计与模式提炼 | DONE |
-| EXAM-HARNESS-001 | 基于审计结果落盘轻量 harness 骨架 | TODO |
+| EXAM-HARNESS-001 | 基于审计结果落盘轻量 harness 骨架 | DONE |
 | EXAM-HARNESS-002 | 建立任务模板、状态模板与交接模板 | TODO |
 | EXAM-HARNESS-003 | 建立题库数据 schema 与输出格式规范 | TODO |
 | EXAM-HARNESS-004 | 建立 Codex/Claude/GPT 开工规则与验收规则 | TODO |
