@@ -1,0 +1,109 @@
+run_id: EXAM-CLEAN-004-20260625-001
+phase: "Phase 1｜Exam Cleaning Pipeline"
+current_task: EXAM-CLEAN-004
+task_title: "阅读理解结构化抽取"
+status: completed
+branch: task-exam-clean-004-reading-passage-blocks
+dataset: datasets/2026_quyixian_english
+work_unit: reading_passage_blocks_first_batch
+input_scope:
+  summary: "Convert the EXAM-CLEAN-003 reading subquestion samples into passage-first reading blocks."
+  selected_exams:
+    - E001_2025_河南开封市_期末_高三_英语
+    - E002_2025_河南2月测评_期末_高三_英语
+  deferred_exams:
+    - E010_2025_福建厦门双十中学_开学考_高三_英语
+  files:
+    - workflow/cleaning/EXAM-CLEAN-003_BOUNDARY_MAP.md
+    - workflow/cleaning/EXAM-CLEAN-003_FIRST_BATCH_PLAN.md
+    - workflow/records/EXAM-CLEAN-003_SAMPLE_RECORDS.jsonl
+    - workflow/schema/QUESTION_RECORD_SCHEMA.yaml
+    - workflow/schema/READING_BLOCK_SCHEMA.yaml
+    - datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E001_2025_河南开封市_期末_高三_英语/Q_原卷.docx
+    - datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E001_2025_河南开封市_期末_高三_英语/QA_解析版.docx
+    - datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E002_2025_河南2月测评_期末_高三_英语/Q_原卷.docx
+    - datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E002_2025_河南2月测评_期末_高三_英语/QA_解析版.docx
+  boundaries:
+    - "Each JSONL record is a reading block with nested questions."
+    - "passage_text comes only from Q_原卷.docx."
+    - "QA_解析版.docx is used only for answer and explanation support."
+    - "No PDF OCR, no image recognition, no table-dependent extraction, no dataset mutation."
+output_scope:
+  summary: "Passage-first JSONL reading blocks plus structure, review, run-state, closeout, and task state updates."
+  files:
+    - workflow/records/EXAM-CLEAN-004_READING_BLOCKS.jsonl
+    - workflow/cleaning/EXAM-CLEAN-004_READING_STRUCTURE.md
+    - workflow/cleaning/EXAM-CLEAN-004_MANUAL_REVIEW.md
+    - workflow/runs/EXAM-CLEAN-004_RUN_STATE.yaml
+    - workflow/Task_Closeouts/EXAM-CLEAN-004_Closeout.md
+    - workflow/schema/READING_BLOCK_SCHEMA.yaml
+    - workflow/TASK_INDEX.md
+    - workflow/TASK_STATE.json
+reading_blocks:
+  count: 2
+  questions_count: 6
+  exams:
+    E001:
+      blocks: 1
+      questions: 3
+      passage_source: "Q_原卷.docx paragraphs 75-95"
+    E002:
+      blocks: 1
+      questions: 3
+      passage_source: "Q_原卷.docx paragraphs 72-80"
+  passage_text_complete: true
+manual_review:
+  emitted_block_count: 0
+  deferred_scope_count: 1
+  reasons:
+    - "E010 deferred because EXAM-CLEAN-003 identified table/media dependencies and numbering-gap risk."
+    - "E001/E002 future media-dependent items remain manual review triggers, but emitted Passage A blocks are text-complete."
+    - "E002 glued option labels were normalized only where unambiguous and recorded in notes."
+validation:
+  status: passed
+  checks:
+    - command: git status --short --branch
+      result: passed
+      evidence: "Final status recorded in closeout."
+    - command: python3 -m json.tool workflow/TASK_STATE.json
+      result: passed
+      evidence: "TASK_STATE.json parsed successfully."
+    - command: test -f workflow/records/EXAM-CLEAN-004_READING_BLOCKS.jsonl
+      result: passed
+      evidence: "File exists."
+    - command: test -f workflow/cleaning/EXAM-CLEAN-004_READING_STRUCTURE.md
+      result: passed
+      evidence: "File exists."
+    - command: test -f workflow/cleaning/EXAM-CLEAN-004_MANUAL_REVIEW.md
+      result: passed
+      evidence: "File exists."
+    - command: test -f workflow/runs/EXAM-CLEAN-004_RUN_STATE.yaml
+      result: passed
+      evidence: "File exists."
+    - command: test -f workflow/Task_Closeouts/EXAM-CLEAN-004_Closeout.md
+      result: passed
+      evidence: "File exists."
+    - command: python3 jsonl reading-block required-field check
+      result: passed
+      evidence: "reading blocks ok 2 questions ok 6"
+    - command: grep -n "EXAM-CLEAN-004\\|EXAM-CLEAN-005" workflow/TASK_INDEX.md workflow/TASK_STATE.json
+      result: passed
+      evidence: "Both task ids found after state/index update."
+    - command: git diff --check
+      result: passed
+      evidence: "No whitespace errors."
+decisions:
+  - "Used EXAM-CLEAN-003 E001/E002 Passage A scope as the first reading block range."
+  - "Did not use QA_解析版.docx for passage_text."
+  - "Deferred E010 rather than extracting across table/media/numbering risk."
+  - "Added a lightweight READING_BLOCK_SCHEMA.yaml without modifying QUESTION_RECORD_SCHEMA.yaml."
+handoff:
+  status: ready_for_next_task
+  summary: "EXAM-CLEAN-004 completed with two passage-first reading blocks and six nested questions."
+  next_action: "Start EXAM-CLEAN-005 七选五结构化抽取."
+  blockers: []
+  files_to_read_next:
+    - workflow/records/EXAM-CLEAN-004_READING_BLOCKS.jsonl
+    - workflow/cleaning/EXAM-CLEAN-004_READING_STRUCTURE.md
+    - workflow/cleaning/EXAM-CLEAN-004_MANUAL_REVIEW.md
+

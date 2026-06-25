@@ -26,7 +26,7 @@
 | EXAM-CLEAN-001 | 首批试卷清洗范围定义与执行边界落盘 | DONE |
 | EXAM-CLEAN-002 | input inventory and source trace | DONE |
 | EXAM-CLEAN-003 | 题型边界识别与切分 | DONE |
-| EXAM-CLEAN-004 | 阅读理解结构化抽取 | TODO |
+| EXAM-CLEAN-004 | 阅读理解结构化抽取 | DONE |
 | EXAM-CLEAN-005 | 七选五结构化抽取 | TODO |
 | EXAM-CLEAN-006 | 完形填空结构化抽取 | TODO |
 | EXAM-CLEAN-007 | 语法填空结构化抽取 | TODO |
