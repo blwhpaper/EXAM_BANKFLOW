@@ -1,0 +1,9 @@
+{
+  "current_phase": "Phase 0｜Harness & Context Engineering",
+  "current_task": "EXAM-HARNESS-000B",
+  "completed_tasks": [
+    "EXAM-HARNESS-000"
+  ],
+  "blocked_tasks": [],
+  "next_task": "EXAM-HARNESS-001"
+}
