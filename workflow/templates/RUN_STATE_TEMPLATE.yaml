@@ -1,0 +1,41 @@
+run_id: RUN-YYYYMMDD-001
+phase: "Phase 0｜Harness & Context Engineering"
+current_task: EXAM-HARNESS-002
+task_title: "建立任务模板、状态模板与交接模板"
+status: in_progress
+branch: task-exam-harness-002-task-state-templates
+dataset: datasets/2026_quyixian_english
+work_unit: single_item
+input_scope:
+  summary: "Describe the exact task, batch, or phase slice being worked on."
+  files:
+    - workflow/TASK_INDEX.md
+    - workflow/TASK_STATE.json
+  boundaries:
+    - "No dataset edits."
+    - "No _reference_repos edits."
+output_scope:
+  summary: "List the exact artifacts expected from this run."
+  files:
+    - workflow/templates/TASK_CARD_TEMPLATE.md
+validation:
+  status: pending
+  checks:
+    - command: python3 -m json.tool workflow/TASK_STATE.json
+      result: pending
+      evidence: ""
+    - command: git diff --check
+      result: pending
+      evidence: ""
+  manual_review_points:
+    - "Confirm template fields are consistent with task scope."
+decisions:
+  - "Record run-level decisions that affect later sessions."
+handoff:
+  status: open
+  summary: "State what is finished and what remains."
+  next_action: "Describe the next concrete step."
+  blockers: []
+  files_to_read_next:
+    - workflow/TASK_INDEX.md
+    - workflow/TASK_STATE.json
