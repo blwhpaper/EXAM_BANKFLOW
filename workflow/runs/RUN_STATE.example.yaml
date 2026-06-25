@@ -21,6 +21,11 @@ output_scope:
   files:
     - workflow/context/WORKFLOW_OVERVIEW.md
     - workflow/context/OPERATING_RULES.md
+  schema_outputs:
+    exam_schema: workflow/schema/EXAM_DATA_SCHEMA.md
+    question_schema: workflow/schema/QUESTION_RECORD_SCHEMA.yaml
+    output_spec: workflow/schema/OUTPUT_FORMAT_SPEC.md
+    validation_rules: workflow/schema/VALIDATION_RULES.md
 validation:
   status: pass
   checks:
@@ -35,6 +40,7 @@ validation:
 decisions:
   - "Borrow structure from reference repositories without copying scaffold scripts."
   - "Keep Phase 0 focused on harness surfaces, not schema or cleaning logic."
+  - "Future structured exam outputs should map to explicit exam, section, question, and export surfaces."
 handoff:
   status: ready
   summary: "Skeleton files landed and verified for Phase 0 use."
