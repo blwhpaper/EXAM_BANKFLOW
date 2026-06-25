@@ -1,14 +1,15 @@
 {
   "current_phase": "Phase 1｜Exam Cleaning Pipeline",
-  "current_task": "EXAM-CLEAN-002",
+  "current_task": "EXAM-CLEAN-003",
   "completed_tasks": [
     "EXAM-HARNESS-000",
     "EXAM-HARNESS-001",
     "EXAM-HARNESS-002",
     "EXAM-HARNESS-003",
     "EXAM-HARNESS-004",
-    "EXAM-CLEAN-001"
+    "EXAM-CLEAN-001",
+    "EXAM-CLEAN-002"
   ],
   "blocked_tasks": [],
-  "next_task": "EXAM-CLEAN-002"
+  "next_task": "EXAM-CLEAN-003"
 }

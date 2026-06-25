@@ -24,7 +24,7 @@
 | ID | Task | Status |
 |---|---|---|
 | EXAM-CLEAN-001 | 首批试卷清洗范围定义与执行边界落盘 | DONE |
-| EXAM-CLEAN-002 | 文本清洗规则引擎 | TODO |
+| EXAM-CLEAN-002 | input inventory and source trace | DONE |
 | EXAM-CLEAN-003 | 题型边界识别与切分 | TODO |
 | EXAM-CLEAN-004 | 阅读理解结构化抽取 | TODO |
 | EXAM-CLEAN-005 | 七选五结构化抽取 | TODO |
