@@ -1,12 +1,13 @@
 {
-  "current_phase": "Phase 0｜Harness & Context Engineering",
-  "current_task": "EXAM-HARNESS-004",
+  "current_phase": "Phase 1｜Exam Cleaning Pipeline",
+  "current_task": "EXAM-CLEAN-001",
   "completed_tasks": [
     "EXAM-HARNESS-000",
     "EXAM-HARNESS-001",
     "EXAM-HARNESS-002",
-    "EXAM-HARNESS-003"
+    "EXAM-HARNESS-003",
+    "EXAM-HARNESS-004"
   ],
   "blocked_tasks": [],
-  "next_task": "EXAM-HARNESS-004"
+  "next_task": "EXAM-CLEAN-001"
 }
