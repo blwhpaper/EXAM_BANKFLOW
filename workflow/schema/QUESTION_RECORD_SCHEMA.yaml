@@ -1,0 +1,198 @@
+schema_version: "1.0"
+record_type: question_record
+description: >
+  Canonical question record for future EXAM-CLEAN tasks. The schema is designed
+  for repository-local YAML or JSON serialization and emphasizes provenance,
+  uncertainty handling, and non-fabrication.
+required:
+  - question_id
+  - exam_id
+  - section_id
+  - question_number
+  - question_type
+  - stem
+  - source_span
+  - normalization_notes
+  - validation_status
+fields:
+  question_id:
+    type: string
+    required: true
+    rules:
+      - unique across all question records
+      - recommended pattern: "{exam_id}-q{normalized_number}"
+  exam_id:
+    type: string
+    required: true
+    rules:
+      - must match parent exam record exam_id
+  section_id:
+    type: string
+    required: true
+    rules:
+      - must match a declared section in the parent exam record
+  question_number:
+    type: [string, integer]
+    required: true
+    rules:
+      - preserve display numbering when source uses composite labels
+  question_type:
+    type: string
+    required: true
+    allowed_examples:
+      - single_choice
+      - multiple_choice
+      - cloze
+      - reading_subquestion
+      - short_answer
+      - grammar_fill
+      - writing
+  stem:
+    type: string
+    required: true
+    rules:
+      - must not be fabricated
+      - may contain normalized whitespace
+  options:
+    type: [array, "null"]
+    required_if:
+      question_type:
+        - single_choice
+        - multiple_choice
+    item_shape:
+      label: string
+      text: string
+      is_correct_candidate: [boolean, "null"]
+    rules:
+      - objective choice questions must provide at least two options
+      - option labels should preserve source labels where possible
+  answer:
+    type: [string, array, object, "null"]
+    required: false
+    rules:
+      - objective questions should provide answer when source confirms it
+      - subjective questions may be null only with explicit status metadata
+      - must not be invented when source is missing
+  explanation:
+    type: [string, "null"]
+    required: false
+    rules:
+      - may be null
+      - null explanations require status note in validation_status or normalization_notes
+  score:
+    type: [number, "null"]
+    required: false
+    rules:
+      - use null when absent or unconfirmed
+  difficulty:
+    type: [string, "null"]
+    required: false
+    allowed_examples:
+      - easy
+      - medium
+      - hard
+      - unknown
+  knowledge_points:
+    type: array
+    required: false
+    default: []
+    item_type: string
+  source_span:
+    type: object
+    required: true
+    required_fields:
+      - source_ref
+      - locator_type
+    recommended_fields:
+      - page
+      - paragraph
+      - line_start
+      - line_end
+      - char_start
+      - char_end
+      - excerpt
+    rules:
+      - must support trace-back to raw source
+  assets:
+    type: array
+    required: false
+    default: []
+    item_shape:
+      asset_id: string
+      asset_type: string
+      source_ref: string
+      caption: [string, "null"]
+  normalization_notes:
+    type: array
+    required: true
+    item_type: string
+    rules:
+      - include note when punctuation, numbering, or whitespace was normalized
+      - include note when any field remains uncertain
+  validation_status:
+    type: object
+    required: true
+    required_fields:
+      - state
+      - issues
+      - answer_status
+      - explanation_status
+      - uncertainty
+    allowed_state:
+      - pass
+      - warn
+      - fail
+    answer_status_allowed:
+      - confirmed
+      - missing_in_source
+      - uncertain
+      - not_applicable
+    explanation_status_allowed:
+      - confirmed
+      - missing_in_source
+      - uncertain
+      - not_applicable
+    issue_item_shape:
+      code: string
+      severity: string
+      message: string
+sample_record:
+  question_id: exam-2026-english-q21
+  exam_id: exam-2026-english
+  section_id: sec-reading-a
+  question_number: 21
+  question_type: single_choice
+  stem: "What does the writer imply about the trip?"
+  options:
+    - label: A
+      text: "It was carefully planned."
+      is_correct_candidate: null
+    - label: B
+      text: "It changed during the journey."
+      is_correct_candidate: null
+  answer: B
+  explanation: null
+  score: 2
+  difficulty: null
+  knowledge_points:
+    - reading_inference
+  source_span:
+    source_ref: datasets/2026_quyixian_english/raw/paper.docx
+    locator_type: page_line
+    page: 4
+    line_start: 12
+    line_end: 19
+    excerpt: "21. What does the writer imply..."
+  assets: []
+  normalization_notes:
+    - "Whitespace normalized around option labels."
+    - "Explanation not present in source bundle."
+  validation_status:
+    state: warn
+    issues:
+      - code: EXPLAIN_MISSING
+        severity: warn
+        message: "Explanation missing in source; exported as null."
+    answer_status: confirmed
+    explanation_status: missing_in_source
+    uncertainty: []
