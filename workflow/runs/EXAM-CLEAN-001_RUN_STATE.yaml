@@ -1,0 +1,78 @@
+run_id: EXAM-CLEAN-001-RUN-20260625-001
+phase: "Phase 1｜Exam Cleaning Pipeline"
+current_task: EXAM-CLEAN-001
+task_title: "首批试卷清洗范围定义与执行边界落盘"
+status: DONE
+branch: task-exam-clean-001-first-cleaning-scope
+dataset: datasets/2026_quyixian_english
+work_unit: scope_definition
+input_scope:
+  summary: "Define the first-batch exam cleaning scope and execution boundaries without cleaning exam content."
+  files:
+    - workflow/TASK_STATE.json
+    - workflow/TASK_INDEX.md
+    - workflow/context/WORKFLOW_OVERVIEW.md
+    - workflow/context/OPERATING_RULES.md
+    - workflow/context/PHASE_1_EXAM_CLEANING.md
+    - workflow/agents/AGENTS.md
+    - workflow/schema/EXAM_DATA_SCHEMA.md
+    - workflow/schema/QUESTION_RECORD_SCHEMA.yaml
+    - workflow/schema/OUTPUT_FORMAT_SPEC.md
+    - workflow/schema/VALIDATION_RULES.md
+    - workflow/validation/MINIMUM_VALIDATION_COMMANDS.md
+  boundaries:
+    - "No real exam question cleaning."
+    - "No question record generation."
+    - "No schema edits."
+    - "No dataset mutation."
+    - "No OCR, image recognition, table extraction, or cleaning pipeline implementation."
+output_scope:
+  summary: "Land EXAM-CLEAN-001 scope, run-state, closeout, and workflow status updates."
+  files:
+    - workflow/cleaning/EXAM-CLEAN-001_FIRST_SCOPE.md
+    - workflow/runs/EXAM-CLEAN-001_RUN_STATE.yaml
+    - workflow/Task_Closeouts/EXAM-CLEAN-001_Closeout.md
+    - workflow/TASK_INDEX.md
+    - workflow/TASK_STATE.json
+validation:
+  status: pass
+  checks:
+    - command: git status --short --branch
+      result: pass
+      evidence: "Current branch is task-exam-clean-001-first-cleaning-scope; changes are limited to TASK_INDEX, TASK_STATE, and EXAM-CLEAN-001 workflow artifacts."
+    - command: python3 -m json.tool workflow/TASK_STATE.json
+      result: pass
+      evidence: "TASK_STATE.json parsed successfully and points current_task/next_task to EXAM-CLEAN-002."
+    - command: test -f workflow/cleaning/EXAM-CLEAN-001_FIRST_SCOPE.md
+      result: pass
+      evidence: "File exists."
+    - command: test -f workflow/runs/EXAM-CLEAN-001_RUN_STATE.yaml
+      result: pass
+      evidence: "File exists."
+    - command: test -f workflow/Task_Closeouts/EXAM-CLEAN-001_Closeout.md
+      result: pass
+      evidence: "File exists."
+    - command: grep -n "EXAM-CLEAN-001" workflow/TASK_INDEX.md workflow/TASK_STATE.json workflow/cleaning/EXAM-CLEAN-001_FIRST_SCOPE.md workflow/runs/EXAM-CLEAN-001_RUN_STATE.yaml workflow/Task_Closeouts/EXAM-CLEAN-001_Closeout.md
+      result: pass
+      evidence: "EXAM-CLEAN-001 references found in task index, task state, scope, run-state, and closeout artifacts."
+    - command: grep -n "EXAM-CLEAN-002" workflow/TASK_INDEX.md workflow/TASK_STATE.json workflow/cleaning/EXAM-CLEAN-001_FIRST_SCOPE.md workflow/Task_Closeouts/EXAM-CLEAN-001_Closeout.md
+      result: pass
+      evidence: "EXAM-CLEAN-002 references found in task index, task state, scope handoff, and closeout."
+  manual_review_points:
+    - "Confirm no concrete exam question content was cleaned."
+    - "Confirm no structured question records were generated."
+    - "Confirm no schema files were modified."
+decisions:
+  - "Treat EXAM-CLEAN-001 as a scope-definition task for first-batch cleaning boundaries."
+  - "Advance workflow state to EXAM-CLEAN-002 only after scope, run-state, closeout, and required validation commands are recorded."
+handoff:
+  status: ready
+  summary: "First-batch scope and execution boundaries are defined; no exam content has been cleaned."
+  next_action: "Begin EXAM-CLEAN-002 by defining the text cleaning rule surface within this scope."
+  blockers: []
+  files_to_read_next:
+    - workflow/TASK_STATE.json
+    - workflow/TASK_INDEX.md
+    - workflow/cleaning/EXAM-CLEAN-001_FIRST_SCOPE.md
+    - workflow/context/PHASE_1_EXAM_CLEANING.md
+    - workflow/agents/AGENTS.md
