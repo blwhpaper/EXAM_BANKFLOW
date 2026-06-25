@@ -1,0 +1,83 @@
+run_id: EXAM-CLEAN-002-RUN-20260625-001
+phase: "Phase 1｜Exam Cleaning Pipeline"
+current_task: EXAM-CLEAN-002
+task_title: "input inventory and source trace"
+status: DONE
+branch: task-exam-clean-002-input-inventory-source-trace
+dataset: datasets/2026_quyixian_english
+work_unit: inventory_source_trace_handoff
+inputs:
+  required_workflow_files:
+    - workflow/TASK_STATE.json
+    - workflow/TASK_INDEX.md
+    - workflow/cleaning/EXAM-CLEAN-001_FIRST_SCOPE.md
+    - workflow/runs/EXAM-CLEAN-001_RUN_STATE.yaml
+    - workflow/schema/EXAM_DATA_SCHEMA.md
+    - workflow/schema/QUESTION_RECORD_SCHEMA.yaml
+    - workflow/schema/OUTPUT_FORMAT_SPEC.md
+    - workflow/schema/VALIDATION_RULES.md
+    - workflow/agents/AGENTS.md
+    - workflow/validation/MINIMUM_VALIDATION_COMMANDS.md
+  dataset_control_files:
+    - datasets/2026_quyixian_english/_整理清单/_BATCH1_WORD_PROCESSING_LIST.csv
+    - datasets/2026_quyixian_english/_整理清单/_STANDARDIZED_EXAMS_INDEX_FINAL.csv
+    - datasets/2026_quyixian_english/_整理清单/_exam_pairing_FROM_ORIGINAL_V2.csv
+    - datasets/2026_quyixian_english/_整理清单/_original_folder_pairing.csv
+    - datasets/2026_quyixian_english/_整理清单/_STANDARDIZED_RENAME_REVIEW.csv
+outputs:
+  files:
+    - workflow/cleaning/EXAM-CLEAN-002_INPUT_INVENTORY.md
+    - workflow/cleaning/EXAM-CLEAN-002_SOURCE_TRACE.md
+    - workflow/runs/EXAM-CLEAN-002_RUN_STATE.yaml
+    - workflow/Task_Closeouts/EXAM-CLEAN-002_Closeout.md
+    - workflow/TASK_INDEX.md
+    - workflow/TASK_STATE.json
+inventory_summary:
+  ready: 84
+  needs_manual_review: 16
+  excluded: 87
+  unknown: 0
+  manual_review_folders:
+    - E006_2025_福建福州市福州第一中学_开学考_高三_英语
+    - E018_2026_江苏南通市_一模_高三_英语
+    - E024_2026_来源待核_Word试卷答案_高三_英语
+    - E035_2026_河北承德_上学期期末_高三_英语
+    - E036_2025_湖南长沙市湖南师范大学附属中学8月_月考_高三_英语
+    - E038_2025_江苏苏州_期末_高三_英语
+    - E045_2026_浙江温州市温州卷_一模_高三_英语
+    - E047_2026_湖南长沙市天心区长沙市长郡中学3月预测_模拟考试_高三_英语
+    - E048_2026_重庆南开中学8月_开学考_高三_英语
+    - E049_2026_湖北黄冈中学_9月平行班同步考_高三_英语
+source_trace:
+  required_fields:
+    - source_file
+    - source_page_or_section
+    - source_question_number
+    - source_trace_status
+    - manual_review_note
+  status_values:
+    - confirmed
+    - partial
+    - ambiguous
+    - missing
+    - unsupported_format
+  source_selection_order:
+    - "Prefer in-scope Q_原卷*.docx as the primary question-text source."
+    - "Use QA_解析版.docx only as supporting trace unless explicitly justified."
+    - "Use A_答案*.docx only for answer/support fields, not as stem-only evidence."
+    - "Keep PDF support as manual-review trace only; no OCR or auto extraction."
+    - "Never use audio, meta.txt, or CSV control files as question-content sources."
+decisions:
+  - "Treat _BATCH1_WORD_PROCESSING_LIST.csv as the authority for first-batch inclusion."
+  - "Treat standardized folder meta.txt plus pairing CSVs as the minimum path back to the original bundle."
+  - "Do not mark unknown-source or multi-Q bundles as READY without manual review."
+  - "Do not promote PDF-only evidence to READY because this task cannot OCR or infer text."
+warnings:
+  - "E024 remains unknown-source and must stay out of automatic cleaning."
+  - "E035, E038, and E049 contain multiple Q files and need explicit source-file choice before EXAM-CLEAN-003."
+  - "E006, E018, E036, E045, E047, and E048 include PDF support that can only be cited with manual review."
+handoff:
+  status: ready_with_warnings
+  next_task: EXAM-CLEAN-003
+  next_action: "Begin concrete cleaning only from READY Word inputs and apply the source-trace contract in workflow/cleaning/EXAM-CLEAN-002_SOURCE_TRACE.md."
+  blockers: []
