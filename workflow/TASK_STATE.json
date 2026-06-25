@@ -15,6 +15,8 @@
     "EXAM-CLEAN-006",
     "EXAM-CLEAN-007"
   ],
-  "blocked_tasks": [],
+  "blocked_tasks": [
+    "EXAM-CLEAN-008"
+  ],
   "next_task": "EXAM-CLEAN-008"
 }

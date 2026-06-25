@@ -1,0 +1,75 @@
+task_id: EXAM-CLEAN-008
+task_title: writing question structured extraction
+phase: Phase 1｜Exam Cleaning Pipeline
+branch: task-exam-clean-008-next-question-records-slice
+run_date: 2026-06-25
+status: BLOCKED
+
+scope:
+  mode: minimal_writing_slice
+  current_task_index_title: 写作题结构化抽取
+  candidate_ranges:
+    - exam_id: E001
+      section: writing
+      source_range: Q_原卷.docx paragraphs 217-240
+      source_question_numbers: 46-47
+      emitted_records: 0
+      status: deferred_manual_review
+    - exam_id: E002
+      section: writing
+      source_range: Q_原卷.docx paragraphs 204-227
+      source_question_numbers: 46-47
+      emitted_records: 0
+      status: deferred_manual_review
+    - exam_id: E010
+      section: writing
+      source_range: Q_原卷.docx paragraphs 252-260
+      source_question_numbers: 76
+      emitted_records: 0
+      status: deferred_manual_review
+  boundaries:
+    - no OCR
+    - no fabricated prompt text
+    - no fabricated answer or explanation
+    - no cloze extraction
+    - no reading block conversion into writing records
+    - no EXAM-CLEAN-001 through EXAM-CLEAN-007 mutation
+
+blocking_reason:
+  summary: standardized Word sources are absent from the current on-disk repo
+  missing_directory: datasets/2026_quyixian_english/_STANDARDIZED_EXAMS
+  available_dataset_files: inventory CSV files under datasets/2026_quyixian_english/_整理清单
+  consequence: writing prompts cannot be verified, so no question records were emitted
+
+outputs:
+  question_records_jsonl: workflow/records/EXAM-CLEAN-008_QUESTION_RECORDS_SLICE.jsonl
+  cleaning_note: workflow/cleaning/EXAM-CLEAN-008_QUESTION_RECORDS_SLICE.md
+  run_state: workflow/runs/EXAM-CLEAN-008_RUN_STATE.yaml
+  closeout: workflow/Task_Closeouts/EXAM-CLEAN-008_Closeout.md
+
+question_record_counts:
+  READY: 0
+  NEEDS_MANUAL_REVIEW: 0
+  EXCLUDED: 0
+  not_emitted_manual_review_candidates: 3
+
+validation:
+  status: PASS
+  checks:
+    - command: git status --short --branch
+      result: "PASS; branch task-exam-clean-008-next-question-records-slice with expected EXAM-CLEAN-008 workflow edits"
+    - command: python3 -m json.tool workflow/TASK_STATE.json >/dev/null
+      result: PASS
+    - command: python3 workflow/validation/validate_question_records_slice.py workflow/records/EXAM-CLEAN-008_QUESTION_RECORDS_SLICE.jsonl
+      result: PASS question_records=0 manual_review=0 reading_questions=0 reading_blocks_indexed=2
+    - command: find workflow/records workflow/cleaning workflow/runs workflow/Task_Closeouts -maxdepth 1 -type f | sort
+      result: PASS; EXAM-CLEAN-008 files present
+    - command: grep -n "EXAM-CLEAN-008" workflow/TASK_INDEX.md workflow/TASK_STATE.json
+      result: PASS; task index marks EXAM-CLEAN-008 BLOCKED and task state keeps it current/next with blocked_tasks entry
+
+handoff:
+  status: blocked_waiting_for_source_docs
+  next_action: restore standardized Word sources or provide source-backed writing prompt extraction with locators
+  next_task: EXAM-CLEAN-008
+  blockers:
+    - datasets/2026_quyixian_english/_STANDARDIZED_EXAMS is not present on disk
