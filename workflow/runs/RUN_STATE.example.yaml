@@ -1,0 +1,22 @@
+run_id: RUN-YYYYMMDD-001
+phase: "Phase 0｜Harness & Context Engineering"
+task_id: EXAM-HARNESS-001
+dataset: datasets/2026_quyixian_english
+branch: task-exam-harness-001-lightweight-harness-skeleton
+inputs:
+  - workflow/audits/EXAM-HARNESS-000_REFERENCE_REPOS_AUDIT.md
+  - workflow/audits/EXAM-HARNESS-000_PATTERN_MATRIX.csv
+  - workflow/TASK_INDEX.md
+  - workflow/TASK_STATE.json
+outputs:
+  - workflow/context/WORKFLOW_OVERVIEW.md
+  - workflow/context/OPERATING_RULES.md
+checks:
+  - command: python3 -m json.tool workflow/TASK_STATE.json
+    result: pass
+  - command: git diff --check
+    result: pass
+decisions:
+  - "Borrow structure from reference repositories without copying scaffold scripts."
+  - "Keep Phase 0 focused on harness surfaces, not schema or cleaning logic."
+next_action: Prepare EXAM-HARNESS-002 templates and supporting validation conventions.
