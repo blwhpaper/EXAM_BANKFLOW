@@ -1,0 +1,107 @@
+schema_version: "1.0"
+record_type: reading_block
+description: >
+  Passage-first reading comprehension record for EXAM-CLEAN-004 and later
+  reading extraction tasks. This schema complements QUESTION_RECORD_SCHEMA.yaml
+  without changing the canonical standalone question record shape.
+required:
+  - reading_block_id
+  - exam_id
+  - section_id
+  - section_label
+  - passage_title
+  - passage_text
+  - questions
+  - source_trace
+  - validation_status
+fields:
+  reading_block_id:
+    type: string
+    required: true
+    rules:
+      - unique within the reading block output set
+      - recommended pattern: "{exam_id}-reading-{passage_label}"
+  exam_id:
+    type: string
+    required: true
+  section_id:
+    type: string
+    required: true
+    rules:
+      - shared by all child questions in the block
+  section_label:
+    type: string
+    required: true
+    examples:
+      - Reading Passage A
+  passage_title:
+    type: [string, "null"]
+    required: true
+    rules:
+      - use a source-visible title when present
+      - use a minimal descriptive title only when source has no title
+  passage_text:
+    type: string
+    required: true
+    rules:
+      - must come from Q_原卷*.docx
+      - must not be reconstructed from child question stems
+      - preserve source meaning with only reviewable whitespace normalization
+  questions:
+    type: array
+    required: true
+    item_type: reading_subquestion
+    item_required:
+      - question_id
+      - question_number
+      - question_type
+      - stem
+      - options
+      - answer
+      - explanation
+    rules:
+      - child question order must follow source order
+      - question_type should be reading_subquestion
+      - child stems should not duplicate the full passage text
+  source_trace:
+    type: object
+    required: true
+    required_fields:
+      - source_file
+      - source_page_or_section
+      - passage_source_span
+      - question_source_span
+      - answer_source_file
+      - answer_source_span
+      - source_trace_status
+      - manual_review_note
+    rules:
+      - source_file for passage_text must be Q_原卷*.docx
+      - answer_source_file may be QA_解析版.docx or A_答案*.docx
+      - source_trace_status follows EXAM-CLEAN-002_SOURCE_TRACE.md
+  assets:
+    type: array
+    required: false
+    default: []
+  normalization_notes:
+    type: array
+    required: false
+    default: []
+  validation_status:
+    type: object
+    required: true
+    required_fields:
+      - state
+      - issues
+      - answer_status
+      - explanation_status
+      - uncertainty
+    allowed_state:
+      - pass
+      - warn
+      - fail
+rules:
+  - Reading comprehension outputs must use the reading block as the parent record.
+  - Detached reading_subquestion records are allowed only as intermediate samples, not final reading extraction output.
+  - Blocks with missing passage text, table/image dependence, ambiguous numbering, or answer conflict must be marked for manual review or deferred.
+
