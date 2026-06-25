@@ -1,0 +1,78 @@
+task_id: EXAM-CLEAN-008A
+task_title: standardized Word source recovery
+phase: Phase 1｜Exam Cleaning Pipeline
+branch: task-exam-clean-008a-standardized-source-recovery
+run_date: 2026-06-25
+status: DONE
+
+scope:
+  mode: source_recovery_inventory
+  parent_blocked_task: EXAM-CLEAN-008
+  actions:
+    - checked current git status and branch
+    - read governance context, task state, EXAM-CLEAN-008 closeout, and EXAM-CLEAN-008 run state
+    - checked datasets directory state
+    - checked .gitignore
+    - searched for .docx and standardized/source-equivalent files
+    - recorded missing standardized Word source requirements
+  boundaries:
+    - no question extraction
+    - no question records generated
+    - no OCR
+    - no fabricated prompts, answers, explanations, scores, or source files
+    - no source file movement, deletion, or rename
+    - no EXAM-CLEAN-009 advancement
+
+source_check:
+  docx_found: false
+  standardized_exams_dir_present: false
+  original_extracted_dir_present: false
+  original_zips_dir_present: false
+  untracked_source_files_found: false
+  ignored_source_files_found: false
+  gitignore_rules:
+    - datasets/*/_ORIGINAL_ZIPS/
+    - datasets/*/_ORIGINAL_EXTRACTED/
+    - datasets/*/_STANDARDIZED_EXAMS/
+
+required_sources:
+  missing:
+    - datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E001_2025_河南开封市_期末_高三_英语/Q_原卷.docx
+    - datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E001_2025_河南开封市_期末_高三_英语/QA_解析版.docx
+    - datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E002_2025_河南2月测评_期末_高三_英语/Q_原卷.docx
+    - datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E002_2025_河南2月测评_期末_高三_英语/QA_解析版.docx
+    - datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E010_2025_福建厦门双十中学_开学考_高三_英语/Q_原卷.docx
+    - datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E010_2025_福建厦门双十中学_开学考_高三_英语/QA_解析版.docx
+
+outputs:
+  inventory: workflow/cleaning/EXAM-CLEAN-008A_SOURCE_RECOVERY_INVENTORY.md
+  run_state: workflow/runs/EXAM-CLEAN-008A_RUN_STATE.yaml
+  closeout: workflow/Task_Closeouts/EXAM-CLEAN-008A_Closeout.md
+
+task_state_result:
+  EXAM-CLEAN-008: BLOCKED
+  EXAM-CLEAN-008A: DONE
+  next_task: EXAM-CLEAN-008
+  EXAM-CLEAN-009_advanced: false
+
+validation:
+  status: PASS
+  checks:
+    - command: git status --short --branch
+      result: "PASS; branch task-exam-clean-008a-standardized-source-recovery with expected EXAM-CLEAN-008A workflow edits"
+    - command: python3 -m json.tool workflow/TASK_STATE.json >/dev/null
+      result: PASS
+    - command: find . -iname "*.docx" | sort
+      result: PASS; no output, meaning no .docx files found in the current repo working tree
+    - command: find . -iname "*STANDARDIZED*o*" -o -iname "*原卷*.docx" -o -iname "*解析*.docx" -o -iname "*答案*.docx" | sort
+      result: "PASS; only .git branch reference paths matched, no dataset source files matched"
+    - command: grep -n "EXAM-CLEAN-008A\\|EXAM-CLEAN-008" workflow/TASK_INDEX.md workflow/TASK_STATE.json
+      result: PASS; EXAM-CLEAN-008 is BLOCKED, EXAM-CLEAN-008A is DONE, current/next task remains EXAM-CLEAN-008
+    - command: git diff --check
+      result: PASS
+
+handoff:
+  status: waiting_for_human_source_restore
+  next_action: restore or mount standardized Word source files, then retry EXAM-CLEAN-008
+  blockers:
+    - no required .docx files exist in the current working tree
