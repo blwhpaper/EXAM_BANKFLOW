@@ -30,7 +30,7 @@
 | EXAM-CLEAN-005 | 阅读理解记录规范化与选项完整性修复 | DONE |
 | EXAM-CLEAN-006 | question records 入库结构试切片 | DONE |
 | EXAM-CLEAN-007 | question records validation hardening | DONE |
-| EXAM-CLEAN-008 | 写作题结构化抽取 | READY_TO_RETRY |
+| EXAM-CLEAN-008 | 写作题结构化抽取 | DONE |
 | EXAM-CLEAN-008A | standardized Word source recovery | DONE |
 | EXAM-CLEAN-008B | manual source placement verification | DONE |
 | EXAM-CLEAN-009 | 答案对齐 | TODO |
