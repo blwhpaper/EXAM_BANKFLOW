@@ -1,0 +1,29 @@
+current_task: EXAM-CLEAN-013
+task_title: manual review QA
+input_scope:
+  structured_question_bank: workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl
+  markdown_export: workflow/exports/EXAM-CLEAN-011_QUESTION_BANK_SUMMARY.md
+  word_export: workflow/exports/EXAM-CLEAN-012_QUESTION_BANK_SUMMARY.docx
+  expected_record_count: 8
+  expected_distribution:
+    reading: 3
+    writing: 5
+output_scope:
+  manual_review_qa: workflow/cleaning/EXAM-CLEAN-013_MANUAL_REVIEW_QA.md
+  validator: workflow/validation/validate_manual_review_qa.py
+  closeout: workflow/Task_Closeouts/EXAM-CLEAN-013_Closeout.md
+validation:
+  task_state_json_readable: pass
+  manual_review_validator: pass
+  git_diff_check: pass
+manual_review:
+  status: complete
+  qa_records_logged: 8
+  pass_records: 8
+  warn_records: 0
+  needs_review_records: 0
+  structured_data_modified: false
+handoff:
+  next_task: EXAM-CLEAN-014
+  next_task_status: TODO
+  note: EXAM-CLEAN-013 only records QA coverage for existing structured/export artifacts and does not enter EXAM-CLEAN-014 execution.

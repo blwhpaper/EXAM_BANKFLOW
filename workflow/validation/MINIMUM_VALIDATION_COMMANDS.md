@@ -90,6 +90,14 @@ For the Word summary export, run:
 python3 workflow/validation/validate_word_summary_export.py workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl workflow/exports/EXAM-CLEAN-012_QUESTION_BANK_SUMMARY.docx
 ```
 
+## EXAM-CLEAN-013 Manual Review QA
+
+For the manual review QA layer, run:
+
+```sh
+python3 workflow/validation/validate_manual_review_qa.py workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl workflow/cleaning/EXAM-CLEAN-013_MANUAL_REVIEW_QA.md
+```
+
 ## Basic Grep Checks
 
 Check that agent rules contain the required execution and safety language:
