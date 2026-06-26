@@ -4,68 +4,71 @@
 
 - task id: EXAM-CLEAN-008
 - task title: writing question structured extraction
+- retry branch: `task-exam-clean-008-retry-writing-question-records`
 - date: 2026-06-25
 
-## Scope Decision
+## Retry Context
 
-EXAM-CLEAN-008 was opened as the next Phase 1 slice after EXAM-CLEAN-006 question records and EXAM-CLEAN-007 validator hardening.
+EXAM-CLEAN-008 first opened the writing slice but emitted zero records because the standardized Word sources were absent from the on-disk repo.
 
-The current authoritative task index names EXAM-CLEAN-008 as `写作题结构化抽取`. It does not point to cloze extraction. This slice therefore does not process cloze or any non-writing section.
+EXAM-CLEAN-008A recorded the missing source inventory and target restore paths.
 
-## Source Inputs Read
+EXAM-CLEAN-008B verified that the required six Word files were restored, non-empty, readable as `.docx` zip containers, and still ignored by git.
 
-- `workflow/cleaning/EXAM-CLEAN-002_SOURCE_TRACE.md`
-- `workflow/cleaning/EXAM-CLEAN-003_BOUNDARY_MAP.md`
-- `workflow/cleaning/EXAM-CLEAN-003_FIRST_BATCH_PLAN.md`
-- `workflow/records/EXAM-CLEAN-004_READING_BLOCKS.jsonl`
-- `workflow/records/EXAM-CLEAN-006_QUESTION_RECORDS_SLICE.jsonl`
-- `workflow/Task_Closeouts/EXAM-CLEAN-006_Closeout.md`
-- `workflow/Task_Closeouts/EXAM-CLEAN-007_Closeout.md`
-- `workflow/runs/EXAM-CLEAN-007_RUN_STATE.yaml`
-- `datasets/2026_quyixian_english/_整理清单/_STANDARDIZED_EXAMS_INDEX_FINAL.csv`
+This retry uses only those restored standardized Word files.
 
-## Candidate Writing Range
+## Actual Extraction Scope
 
-The only source-backed writing boundaries already present in workflow artifacts are from EXAM-CLEAN-003:
+| exam_id | source question range | emitted records | status |
+| --- | --- | ---: | --- |
+| E001 | writing questions 46-47 | 2 | READY |
+| E002 | writing questions 46-47 | 2 | READY |
+| E010 | writing question 76 | 1 | READY |
 
-| exam_id | source scope | writing candidate | status |
+Total emitted question records: 5.
+
+## Source Files
+
+- E001 Q: `datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E001_2025_河南开封市_期末_高三_英语/Q_原卷.docx`
+- E001 QA: `datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E001_2025_河南开封市_期末_高三_英语/QA_解析版.docx`
+- E002 Q: `datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E002_2025_河南2月测评_期末_高三_英语/Q_原卷.docx`
+- E002 QA: `datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E002_2025_河南2月测评_期末_高三_英语/QA_解析版.docx`
+- E010 Q: `datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E010_2025_福建厦门双十中学_开学考_高三_英语/Q_原卷.docx`
+- E010 QA: `datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E010_2025_福建厦门双十中学_开学考_高三_英语/QA_解析版.docx`
+
+## Records Emitted
+
+| question_id | source range | answer support | result |
 | --- | --- | --- | --- |
-| E001 | `Q_原卷.docx` paragraphs 217-240 | source question numbers 46-47 | deferred, not emitted |
-| E002 | `Q_原卷.docx` paragraphs 204-227 | source question numbers 46-47 | deferred, not emitted |
-| E010 | `Q_原卷.docx` paragraphs 252-260 | source question number 76 | deferred, not emitted because EXAM-CLEAN-003 marked table/media/numbering risk |
+| `e001-writing-q46` | E001 Q paragraphs 217-227 | E001 QA paragraphs 346-365 | READY |
+| `e001-writing-q47` | E001 Q paragraphs 228-240 | E001 QA paragraphs 379-396 | READY |
+| `e002-writing-q46` | E002 Q paragraphs 204-214 | E002 QA paragraphs 332-350 | READY |
+| `e002-writing-q47` | E002 Q paragraphs 215-227 | E002 QA paragraphs 364-381 | READY |
+| `e010-writing-q76` | E010 Q paragraphs 252-260 | E010 QA paragraphs 468-485 | READY |
 
-## Blocking Finding
+## Record Policy
 
-The current on-disk repo does not contain `datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/`. The tracked dataset files are the inventory CSV files under `datasets/2026_quyixian_english/_整理清单/`.
+- `question_type` is `writing`.
+- `options` is `null`.
+- `answer` is stored as a source-backed `sample_answer` object from `QA_解析版.docx`.
+- `explanation` is summarized from the source-backed QA analysis paragraphs.
+- `source_trace_status` is `READY` because the prompt, sample answer, and explanation support are all visible in the cited Word paragraph ranges.
+- `score` is taken from the visible section score: 15 for application/proposal writing and 25 for continuation writing.
 
-Because the primary Word sources are absent from the current working tree, this task cannot inspect the actual writing prompts in `Q_原卷.docx` and cannot confirm answer or scoring support from `QA_解析版.docx`.
+## Manual Review
 
-## Record Output
+- READY: 5
+- NEEDS_MANUAL_REVIEW: 0
+- EXCLUDED: 0
 
-`workflow/records/EXAM-CLEAN-008_QUESTION_RECORDS_SLICE.jsonl` intentionally contains zero question records.
+No emitted record requires manual review. E010 had previous table/media/numbering warnings for other ranges, but the writing prompt 76 and matching QA support are visible in the restored Word files.
 
-No placeholder writing records were emitted because a valid question record requires a non-fabricated `stem`/`question_text`, source locator, question number, answer status, and manual-review metadata. The current repo only preserves writing section boundaries, not the writing prompt text itself.
+## Boundaries Respected
 
-## Manual Review Boundary
-
-The following candidate ranges require manual source review before question-record creation:
-
-| exam_id | candidate | manual_review_note |
-| --- | --- | --- |
-| E001 | writing 46-47 | NEEDS_MANUAL_REVIEW: primary source path and paragraph range are known from EXAM-CLEAN-003, but `Q_原卷.docx` is absent from the current on-disk repo, so prompt text cannot be verified. |
-| E002 | writing 46-47 | NEEDS_MANUAL_REVIEW: primary source path and paragraph range are known from EXAM-CLEAN-003, but `Q_原卷.docx` is absent from the current on-disk repo, so prompt text cannot be verified. |
-| E010 | writing 76 | NEEDS_MANUAL_REVIEW: EXAM-CLEAN-003 already recorded table/media/numbering risk, and the current on-disk repo does not contain the Word source needed to resolve it. |
-
-## Non-Fabrication Checks
-
-- no OCR was run
-- no source Word content was guessed
-- no writing prompt, answer, explanation, score, or page number was invented
-- no reading block was converted into a writing question record
-- no cloze item was processed
-- no historical EXAM-CLEAN-001 through EXAM-CLEAN-007 outputs were modified
-
-## Handoff
-
-EXAM-CLEAN-008 remains blocked until the standardized Word sources are available in the working tree or a later task provides source-backed writing prompt text with paragraph locators.
+- no OCR
+- no question text, answer, explanation, score, or source locator was fabricated
+- no reading comprehension records were emitted
+- no cloze records were emitted
+- no Word source files were modified or staged
+- EXAM-CLEAN-009 was not advanced
 

@@ -5,12 +5,12 @@
 - task id: EXAM-CLEAN-008
 - task title: 写作题结构化抽取
 - phase: Phase 1｜Exam Cleaning Pipeline
-- branch: task-exam-clean-008-next-question-records-slice
+- branch: task-exam-clean-008-retry-writing-question-records
 - closeout date: 2026-06-25
 
 ## Files Changed
 
-- added:
+- updated:
   - `workflow/records/EXAM-CLEAN-008_QUESTION_RECORDS_SLICE.jsonl`
   - `workflow/cleaning/EXAM-CLEAN-008_QUESTION_RECORDS_SLICE.md`
   - `workflow/runs/EXAM-CLEAN-008_RUN_STATE.yaml`
@@ -19,65 +19,86 @@
   - `workflow/TASK_INDEX.md`
   - `workflow/TASK_STATE.json`
 
-## Summary
+## Retry Summary
 
-- summary: Opened the EXAM-CLEAN-008 writing-question slice and confirmed that the current task index points to writing extraction, not cloze. The current on-disk repo does not contain the standardized Word sources needed to verify writing prompt text, so the JSONL slice intentionally emits zero question records instead of fabricating stems, answers, explanations, scores, or source locators.
+- original EXAM-CLEAN-008 status: `BLOCKED`
+- original reason: standardized Word sources were absent, so no writing records were emitted.
+- EXAM-CLEAN-008A result: missing source inventory and target paths were recorded.
+- EXAM-CLEAN-008B result: six target Word files were restored and verified as non-empty `.docx` files containing `word/document.xml`.
+- retry result: emitted five source-backed writing question records.
 
-## Actual Cleaning Scope
+## Actual Extraction Scope
 
-- attempted scope: writing candidates from the existing EXAM-CLEAN-003 boundary map
-- candidate ranges:
-  - E001 writing 46-47, `Q_原卷.docx` paragraphs 217-240
-  - E002 writing 46-47, `Q_原卷.docx` paragraphs 204-227
-  - E010 writing 76, `Q_原卷.docx` paragraphs 252-260
-- emitted question records: 0
-- source availability: blocked because `datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/` is absent from the current on-disk repo
+- E001 writing questions 46-47
+- E002 writing questions 46-47
+- E010 writing question 76
 
 ## Question Record Counts
 
-- READY: 0
+- READY: 5
 - NEEDS_MANUAL_REVIEW: 0
 - EXCLUDED: 0
-- not emitted manual-review candidates: 3
+
+## Records Emitted
+
+- `e001-writing-q46`
+- `e001-writing-q47`
+- `e002-writing-q46`
+- `e002-writing-q47`
+- `e010-writing-q76`
+
+## Source Trace Summary
+
+Each record includes:
+
+- primary `Q_原卷.docx` source path
+- paragraph locator for the prompt
+- visible source question number
+- `QA_解析版.docx` support path
+- answer/support paragraph locator
+- `source_trace_status: READY`
+- `manual_review_note`
+
+Writing sample answers are stored as `answer_type: sample_answer` objects, not objective answer keys.
 
 ## Boundaries Respected
 
 - no OCR
-- no source trace skipped
-- no invented writing prompts
-- no invented answer, explanation, score, or page number
-- no passage block converted into a complete question record
-- no cloze extraction
-- no EXAM-CLEAN-001 through EXAM-CLEAN-007 records changed
+- no fabricated question text, answer, explanation, score, or source locator
+- no reading comprehension records
+- no cloze records
+- no Word source mutation
+- no Word source git add
+- no EXAM-CLEAN-009 advancement
 
-## Verification Commands
+## Validation Commands
 
 - commands run:
   - `git status --short --branch`
   - `python3 -m json.tool workflow/TASK_STATE.json >/dev/null`
   - `python3 workflow/validation/validate_question_records_slice.py workflow/records/EXAM-CLEAN-008_QUESTION_RECORDS_SLICE.jsonl`
-  - `find workflow/records workflow/cleaning workflow/runs workflow/Task_Closeouts -maxdepth 1 -type f | sort`
   - `grep -n "EXAM-CLEAN-008" workflow/TASK_INDEX.md workflow/TASK_STATE.json`
+  - `git diff --check`
 
 ## Verification Result
 
 - PASS/WARN/FAIL: PASS
 - evidence summary:
-  - `git status --short --branch` showed branch `task-exam-clean-008-next-question-records-slice` with only expected EXAM-CLEAN-008 workflow edits and task-state updates.
+  - `git status --short --branch` showed branch `task-exam-clean-008-retry-writing-question-records` with expected EXAM-CLEAN-008 workflow edits.
   - `python3 -m json.tool workflow/TASK_STATE.json >/dev/null` passed.
-  - `python3 workflow/validation/validate_question_records_slice.py workflow/records/EXAM-CLEAN-008_QUESTION_RECORDS_SLICE.jsonl` returned `PASS question_records=0 manual_review=0 reading_questions=0 reading_blocks_indexed=2`.
-  - `find workflow/records workflow/cleaning workflow/runs workflow/Task_Closeouts -maxdepth 1 -type f | sort` listed the EXAM-CLEAN-008 JSONL, cleaning note, run-state, and closeout files.
-  - `grep -n "EXAM-CLEAN-008" workflow/TASK_INDEX.md workflow/TASK_STATE.json` confirmed `EXAM-CLEAN-008` is marked `BLOCKED` and remains the current/next task.
+  - `python3 workflow/validation/validate_question_records_slice.py workflow/records/EXAM-CLEAN-008_QUESTION_RECORDS_SLICE.jsonl` returned `PASS question_records=5 manual_review=0 reading_questions=0 reading_blocks_indexed=2`.
+  - `grep -n "EXAM-CLEAN-008" workflow/TASK_INDEX.md workflow/TASK_STATE.json` confirmed EXAM-CLEAN-008 is `DONE`, EXAM-CLEAN-008A and EXAM-CLEAN-008B are `DONE`, and current/next task remains EXAM-CLEAN-008.
+  - `git diff --check` passed.
 
 ## Not Done
 
 - deferred work:
-  - Restore or provide the standardized Word sources so E001/E002 writing prompts can be extracted with paragraph locators.
-  - Resolve E010 table/media/numbering risk before any writing question record is emitted.
+  - EXAM-CLEAN-009 answer alignment after review of this retry output
+  - broader writing extraction beyond E001/E002/E010 selected ranges
 - known gaps:
-  - This task did not create READY writing question records because the prompt text is not present in the current on-disk source state.
+  - Current validator checks structural requirements but does not semantically validate writing prompt completeness.
 
 ## Next Task
 
-- next task: EXAM-CLEAN-008
-- recommendation: Keep EXAM-CLEAN-008 blocked until source Word files are available; do not advance to EXAM-CLEAN-009 answer alignment from a zero-record writing slice.
+- next task: EXAM-CLEAN-009
+- recommendation: Do not advance task state to EXAM-CLEAN-009 until this retry output is reviewed and accepted.
