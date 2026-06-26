@@ -58,6 +58,14 @@ python3 -m json.tool workflow/TASK_STATE.json >/dev/null
 git diff --check
 ```
 
+## EXAM-CLEAN-009 Answer Alignment
+
+For mixed reading/writing question-record answer audits, run:
+
+```sh
+python3 workflow/validation/validate_answer_alignment.py workflow/records/EXAM-CLEAN-006_QUESTION_RECORDS_SLICE.jsonl workflow/records/EXAM-CLEAN-008_QUESTION_RECORDS_SLICE.jsonl
+```
+
 ## Basic Grep Checks
 
 Check that agent rules contain the required execution and safety language:

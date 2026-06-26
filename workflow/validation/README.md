@@ -54,6 +54,18 @@ git diff --check
 
 `validate_question_records_slice.py` checks JSONL parseability, required question/provenance fields, unique `question_id`, source trace status enums, complete A-D options for choice questions, answer-to-option consistency, reading block linkage against `workflow/records/EXAM-CLEAN-004_READING_BLOCKS.jsonl`, and manual-review note consistency.
 
+### EXAM-CLEAN-009 Answer Alignment
+
+Run this additional validator when a task audits answer-field alignment across mixed question types:
+
+```sh
+python3 workflow/validation/validate_answer_alignment.py \
+  workflow/records/EXAM-CLEAN-006_QUESTION_RECORDS_SLICE.jsonl \
+  workflow/records/EXAM-CLEAN-008_QUESTION_RECORDS_SLICE.jsonl
+```
+
+`validate_answer_alignment.py` checks that objective questions use source-backed label answers, subjective questions use source-backed answer objects, READY/confirmed records keep answer-source locators, and unresolved answer states are explicitly routed to manual review instead of silent placeholders.
+
 ## Minimum Current Stage
 
 For EXAM-HARNESS-004, use `workflow/validation/MINIMUM_VALIDATION_COMMANDS.md` as the current executable validation surface. Any item that cannot yet be automated must be recorded as `MANUAL_CHECK` in the task closeout or review checklist.
