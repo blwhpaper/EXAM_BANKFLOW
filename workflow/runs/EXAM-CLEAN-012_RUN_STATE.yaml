@@ -1,0 +1,45 @@
+task_id: EXAM-CLEAN-012
+task_title: Word 汇总导出
+branch: task-exam-clean-012-word-summary-export
+status: completed
+run_date: 2026-06-25
+inputs:
+  - workflow/TASK_STATE.json
+  - workflow/TASK_INDEX.md
+  - workflow/schema/EXAM_DATA_SCHEMA.md
+  - workflow/schema/QUESTION_RECORD_SCHEMA.yaml
+  - workflow/schema/OUTPUT_FORMAT_SPEC.md
+  - workflow/schema/VALIDATION_RULES.md
+  - workflow/validation/README.md
+  - workflow/validation/MINIMUM_VALIDATION_COMMANDS.md
+  - workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl
+  - workflow/exports/EXAM-CLEAN-011_QUESTION_BANK_SUMMARY.md
+  - workflow/Task_Closeouts/EXAM-CLEAN-011_Closeout.md
+outputs:
+  - workflow/exports/EXAM-CLEAN-012_QUESTION_BANK_SUMMARY.docx
+  - workflow/cleaning/EXAM-CLEAN-012_WORD_SUMMARY_EXPORT.md
+  - workflow/runs/EXAM-CLEAN-012_RUN_STATE.yaml
+  - workflow/Task_Closeouts/EXAM-CLEAN-012_Closeout.md
+  - workflow/validation/validate_word_summary_export.py
+counts:
+  total_records: 8
+  section_type_distribution:
+    reading: 3
+    writing: 5
+  manual_review_required: 0
+validation:
+  required_commands:
+    - python3 -m json.tool workflow/TASK_STATE.json >/dev/null
+    - python3 workflow/validation/validate_structured_question_bank.py workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl
+    - python3 workflow/validation/validate_word_summary_export.py workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl workflow/exports/EXAM-CLEAN-012_QUESTION_BANK_SUMMARY.docx
+    - git diff --check
+    - git status --short --branch
+  validator_stdout: PASS jsonl_records=8 docx_sections=1 word_records=8 reading_records=3 writing_records=5 manual_review=required
+  validator_supporting_stdout:
+    - PASS structured_records=8 input_records=8 reading_records=3 writing_records=5 manual_review=0
+  manual_review_status: pending_human_review
+  manual_review_note: automated structure checks passed; final human readability review remains required by workflow
+git:
+  word_export_git_add_force: yes
+  export_is_staged: yes
+  handoff: advance_to_exam_clean_013_after_validation
