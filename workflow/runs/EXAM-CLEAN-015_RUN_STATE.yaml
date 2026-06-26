@@ -1,0 +1,38 @@
+current_task: EXAM-CLEAN-015
+task_title: review package
+input_scope:
+  structured_question_bank: workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl
+  markdown_export: workflow/exports/EXAM-CLEAN-011_QUESTION_BANK_SUMMARY.md
+  word_export: workflow/exports/EXAM-CLEAN-012_QUESTION_BANK_SUMMARY.docx
+  manual_review_qa: workflow/cleaning/EXAM-CLEAN-013_MANUAL_REVIEW_QA.md
+  excel_index: workflow/exports/EXAM-CLEAN-014_QUESTION_BANK_INDEX.xlsx
+  expected_record_count: 8
+  expected_distribution:
+    reading: 3
+    writing: 5
+output_scope:
+  review_package: workflow/cleaning/EXAM-CLEAN-015_REVIEW_PACKAGE.md
+  validator: workflow/validation/validate_review_package.py
+  closeout: workflow/Task_Closeouts/EXAM-CLEAN-015_Closeout.md
+validation:
+  task_state_json_readable: pass
+  structured_question_bank_validator: pass
+  markdown_summary_validator: pass
+  word_summary_validator: pass
+  manual_review_qa_validator: pass
+  excel_index_validator: pass
+  review_package_validator: pass
+  git_diff_check: pass
+review_package:
+  status: complete
+  covered_records: 8
+  reading_records: 3
+  writing_records: 5
+  structured_data_modified: false
+  markdown_modified: false
+  word_modified: false
+  excel_modified: false
+handoff:
+  next_task: null
+  next_task_status: none
+  note: EXAM-CLEAN-015 completes the current Phase 1 first-batch review package without mutating the structured question bank or existing export artifacts.

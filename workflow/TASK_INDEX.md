@@ -40,4 +40,6 @@
 | EXAM-CLEAN-012 | Word 汇总导出 | DONE |
 | EXAM-CLEAN-013 | 人工复核 QA | DONE |
 | EXAM-CLEAN-014 | Excel 总索引 | DONE |
-| EXAM-CLEAN-015 | 人工复核与错误回修 | TODO |
+| EXAM-CLEAN-015 | 人工复核与错误回修 | DONE |
+
+Phase 1 当前批次完成，当前无后续已排队任务。
