@@ -1,0 +1,36 @@
+task_id: EXAM-CLEAN-011
+task_title: Markdown 汇总导出
+branch: task-exam-clean-011-markdown-summary-export
+status: completed
+run_date: 2026-06-25
+inputs:
+  - workflow/TASK_STATE.json
+  - workflow/TASK_INDEX.md
+  - workflow/schema/EXAM_DATA_SCHEMA.md
+  - workflow/schema/QUESTION_RECORD_SCHEMA.yaml
+  - workflow/schema/OUTPUT_FORMAT_SPEC.md
+  - workflow/schema/VALIDATION_RULES.md
+  - workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl
+  - workflow/cleaning/EXAM-CLEAN-010_STRUCTURED_DATA_INGEST.md
+  - workflow/Task_Closeouts/EXAM-CLEAN-010_Closeout.md
+  - workflow/validation/README.md
+  - workflow/validation/MINIMUM_VALIDATION_COMMANDS.md
+outputs:
+  - workflow/exports/EXAM-CLEAN-011_QUESTION_BANK_SUMMARY.md
+  - workflow/cleaning/EXAM-CLEAN-011_MARKDOWN_SUMMARY_EXPORT.md
+  - workflow/runs/EXAM-CLEAN-011_RUN_STATE.yaml
+  - workflow/Task_Closeouts/EXAM-CLEAN-011_Closeout.md
+  - workflow/validation/validate_markdown_summary_export.py
+counts:
+  total_records: 8
+  section_type_distribution:
+    reading: 3
+    writing: 5
+  manual_review_required: 0
+validation:
+  required_commands:
+    - python3 -m json.tool workflow/TASK_STATE.json >/dev/null
+    - python3 workflow/validation/validate_structured_question_bank.py workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl
+    - python3 workflow/validation/validate_markdown_summary_export.py workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl workflow/exports/EXAM-CLEAN-011_QUESTION_BANK_SUMMARY.md
+    - git diff --check
+    - git status --short --branch
