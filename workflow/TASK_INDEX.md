@@ -33,6 +33,7 @@
 | EXAM-CLEAN-008 | 写作题结构化抽取 | DONE |
 | EXAM-CLEAN-008A | standardized Word source recovery | DONE |
 | EXAM-CLEAN-008B | manual source placement verification | DONE |
+| EXAM-CLEAN-008C | post-retry task pointer repair | DONE |
 | EXAM-CLEAN-009 | 答案对齐 | TODO |
 | EXAM-CLEAN-010 | 结构化数据入库 | TODO |
 | EXAM-CLEAN-011 | Markdown 汇总导出 | TODO |

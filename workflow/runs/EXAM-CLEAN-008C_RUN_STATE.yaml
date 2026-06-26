@@ -1,0 +1,55 @@
+task_id: EXAM-CLEAN-008C
+task_title: post-retry task pointer repair
+phase: Phase 1｜Exam Cleaning Pipeline
+branch: task-exam-clean-008c-task-pointer-repair
+run_date: 2026-06-25
+status: DONE
+
+scope:
+  mode: task_state_pointer_repair
+  before:
+    current_task: EXAM-CLEAN-008
+    next_task: EXAM-CLEAN-008
+    blocked_tasks: []
+    task_index:
+      EXAM-CLEAN-008: DONE
+      EXAM-CLEAN-009: TODO
+  after:
+    current_task: EXAM-CLEAN-009
+    next_task: EXAM-CLEAN-009
+    blocked_tasks: []
+    task_index:
+      EXAM-CLEAN-008: DONE
+      EXAM-CLEAN-008C: DONE
+      EXAM-CLEAN-009: TODO
+  boundaries:
+    - no records changed
+    - no EXAM-CLEAN-008 closeout changed
+    - no EXAM-CLEAN-008A closeout changed
+    - no EXAM-CLEAN-008B closeout changed
+    - no question extraction
+    - no EXAM-CLEAN-009 entity work performed
+
+outputs:
+  run_state: workflow/runs/EXAM-CLEAN-008C_RUN_STATE.yaml
+  closeout: workflow/Task_Closeouts/EXAM-CLEAN-008C_Closeout.md
+  task_state: workflow/TASK_STATE.json
+  task_index: workflow/TASK_INDEX.md
+
+validation:
+  status: PASS
+  checks:
+    - command: git status --short --branch
+      result: "PASS; branch task-exam-clean-008c-task-pointer-repair with expected pointer-repair edits"
+    - command: python3 -m json.tool workflow/TASK_STATE.json >/dev/null
+      result: PASS
+    - command: grep -n "EXAM-CLEAN-008C\\|EXAM-CLEAN-009\\|EXAM-CLEAN-008" workflow/TASK_INDEX.md workflow/TASK_STATE.json
+      result: PASS; TASK_INDEX marks EXAM-CLEAN-008/008A/008B/008C DONE and EXAM-CLEAN-009 TODO, TASK_STATE points current/next to EXAM-CLEAN-009
+    - command: git diff --check
+      result: PASS
+
+handoff:
+  status: ready_for_next_task
+  next_task: EXAM-CLEAN-009
+  note: This task only repairs task pointers; EXAM-CLEAN-009 has not been executed.
+  blockers: []
