@@ -39,5 +39,5 @@
 | EXAM-CLEAN-011 | Markdown 汇总导出 | DONE |
 | EXAM-CLEAN-012 | Word 汇总导出 | DONE |
 | EXAM-CLEAN-013 | 人工复核 QA | DONE |
-| EXAM-CLEAN-014 | Excel 总索引 | TODO |
+| EXAM-CLEAN-014 | Excel 总索引 | DONE |
 | EXAM-CLEAN-015 | 人工复核与错误回修 | TODO |
