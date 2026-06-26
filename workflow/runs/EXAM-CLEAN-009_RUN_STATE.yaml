@@ -1,0 +1,42 @@
+task_id: EXAM-CLEAN-009
+task_title: 答案对齐
+phase: "Phase 1｜Exam Cleaning Pipeline"
+branch: task-exam-clean-009-answer-alignment
+status: DONE
+date: 2026-06-25
+inputs:
+  - workflow/TASK_STATE.json
+  - workflow/TASK_INDEX.md
+  - workflow/schema/QUESTION_RECORD_SCHEMA.yaml
+  - workflow/records/EXAM-CLEAN-006_QUESTION_RECORDS_SLICE.jsonl
+  - workflow/records/EXAM-CLEAN-008_QUESTION_RECORDS_SLICE.jsonl
+  - workflow/cleaning/EXAM-CLEAN-006_QUESTION_RECORDS_SLICE.md
+  - workflow/cleaning/EXAM-CLEAN-008_QUESTION_RECORDS_SLICE.md
+  - workflow/validation/validate_question_records_slice.py
+  - workflow/Task_Closeouts/EXAM-CLEAN-006_Closeout.md
+  - workflow/Task_Closeouts/EXAM-CLEAN-008_Closeout.md
+outputs:
+  - workflow/cleaning/EXAM-CLEAN-009_ANSWER_ALIGNMENT.md
+  - workflow/runs/EXAM-CLEAN-009_RUN_STATE.yaml
+  - workflow/Task_Closeouts/EXAM-CLEAN-009_Closeout.md
+  - workflow/validation/validate_answer_alignment.py
+summary:
+  total_records_audited: 8
+  confirmed_answers: 8
+  manual_review_required: 0
+  missing_answers: 0
+  record_files_modified: []
+validation_commands:
+  - git status --short --branch
+  - python3 -m json.tool workflow/TASK_STATE.json >/dev/null
+  - python3 workflow/validation/validate_question_records_slice.py workflow/records/EXAM-CLEAN-006_QUESTION_RECORDS_SLICE.jsonl
+  - python3 workflow/validation/validate_question_records_slice.py workflow/records/EXAM-CLEAN-008_QUESTION_RECORDS_SLICE.jsonl
+  - python3 workflow/validation/validate_answer_alignment.py workflow/records/EXAM-CLEAN-006_QUESTION_RECORDS_SLICE.jsonl workflow/records/EXAM-CLEAN-008_QUESTION_RECORDS_SLICE.jsonl
+  - git diff --check
+boundaries_respected:
+  - no new questions added
+  - no cloze work performed
+  - no ingestion performed
+  - no export artifacts produced
+  - no OCR used
+  - no answer guessing
