@@ -106,6 +106,14 @@ For the Excel total index, run:
 python3 workflow/validation/validate_excel_index.py workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl workflow/exports/EXAM-CLEAN-014_QUESTION_BANK_INDEX.xlsx
 ```
 
+## EXAM-CLEAN-015 Review Package
+
+For the final review package, run:
+
+```sh
+python3 workflow/validation/validate_review_package.py workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl workflow/cleaning/EXAM-CLEAN-015_REVIEW_PACKAGE.md
+```
+
 ## Basic Grep Checks
 
 Check that agent rules contain the required execution and safety language:

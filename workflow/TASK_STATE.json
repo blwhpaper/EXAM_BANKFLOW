@@ -22,9 +22,10 @@
     "EXAM-CLEAN-011",
     "EXAM-CLEAN-012",
     "EXAM-CLEAN-013",
-    "EXAM-CLEAN-014"
+    "EXAM-CLEAN-014",
+    "EXAM-CLEAN-015"
   ],
   "blocked_tasks": [],
-  "next_task": "EXAM-CLEAN-015",
-  "current_task": "EXAM-CLEAN-015"
+  "next_task": null,
+  "current_task": null
 }

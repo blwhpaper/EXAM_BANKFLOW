@@ -125,6 +125,18 @@ python3 workflow/validation/validate_excel_index.py \
 
 `validate_excel_index.py` checks JSONL parseability, fixed 8-record input scope, real-xlsx zip structure, required 10-column header presence, full 8-record `record_id` coverage, reading/writing distribution consistency, field-level trace consistency against the JSONL, reading passage/block visibility, and writing prompt-summary plus sample-answer preservation.
 
+### EXAM-CLEAN-015 Review Package
+
+Run this validator when the EXAM-CLEAN-010 structured question-bank JSONL is handed off through the final EXAM-CLEAN-015 review package:
+
+```sh
+python3 workflow/validation/validate_review_package.py \
+  workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl \
+  workflow/cleaning/EXAM-CLEAN-015_REVIEW_PACKAGE.md
+```
+
+`validate_review_package.py` checks JSONL parseability, review-package markdown existence, presence of all 11 required review-package sections, record-count reconciliation, `reading=3` and `writing=5` consistency, explicit reference to the Markdown, Word, Excel, and manual-review QA prerequisite artifacts, and presence of core source-trace plus answer-alignment summary markers required for final handoff.
+
 ## Minimum Current Stage
 
 For EXAM-HARNESS-004, use `workflow/validation/MINIMUM_VALIDATION_COMMANDS.md` as the current executable validation surface. Any item that cannot yet be automated must be recorded as `MANUAL_CHECK` in the task closeout or review checklist.
