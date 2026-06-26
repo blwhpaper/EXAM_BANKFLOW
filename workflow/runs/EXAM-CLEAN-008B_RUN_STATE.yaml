@@ -1,0 +1,119 @@
+task_id: EXAM-CLEAN-008B
+task_title: manual source placement verification
+phase: Phase 1｜Exam Cleaning Pipeline
+branch: task-exam-clean-008b-manual-source-placement-verification
+run_date: 2026-06-25
+status: DONE
+
+scope:
+  mode: source_placement_verification
+  parent_blocked_task: EXAM-CLEAN-008
+  target_files_count: 6
+  actions:
+    - confirmed active branch
+    - fetched origin main and confirmed main/origin/main/FETCH_HEAD match
+    - read governance context, task state, EXAM-CLEAN-008 closeout, EXAM-CLEAN-008A closeout, and EXAM-CLEAN-008A recovery inventory
+    - checked .gitignore
+    - verified six target Word files exist
+    - verified target file sizes are greater than zero
+    - verified each target .docx opens as a zip and contains word/document.xml
+    - confirmed _STANDARDIZED_EXAMS remains git-ignored
+  boundaries:
+    - no question extraction
+    - no question records generated
+    - no prompt text read or rewritten
+    - no OCR
+    - no Word source files added to git
+    - no ignored files deleted
+    - no EXAM-CLEAN-009 advancement
+
+source_files:
+  - exam_id: E001
+    role: primary_paper
+    path: datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E001_2025_河南开封市_期末_高三_英语/Q_原卷.docx
+    exists: true
+    size_bytes: 31733
+    zip_ok: true
+    word_document_xml: true
+    result: OK
+  - exam_id: E001
+    role: answer_explanation_support
+    path: datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E001_2025_河南开封市_期末_高三_英语/QA_解析版.docx
+    exists: true
+    size_bytes: 45890
+    zip_ok: true
+    word_document_xml: true
+    result: OK
+  - exam_id: E002
+    role: primary_paper
+    path: datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E002_2025_河南2月测评_期末_高三_英语/Q_原卷.docx
+    exists: true
+    size_bytes: 31087
+    zip_ok: true
+    word_document_xml: true
+    result: OK
+  - exam_id: E002
+    role: answer_explanation_support
+    path: datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E002_2025_河南2月测评_期末_高三_英语/QA_解析版.docx
+    exists: true
+    size_bytes: 45821
+    zip_ok: true
+    word_document_xml: true
+    result: OK
+  - exam_id: E010
+    role: primary_paper
+    path: datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E010_2025_福建厦门双十中学_开学考_高三_英语/Q_原卷.docx
+    exists: true
+    size_bytes: 31816
+    zip_ok: true
+    word_document_xml: true
+    result: OK
+  - exam_id: E010
+    role: answer_explanation_support
+    path: datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/E010_2025_福建厦门双十中学_开学考_高三_英语/QA_解析版.docx
+    exists: true
+    size_bytes: 52894
+    zip_ok: true
+    word_document_xml: true
+    result: OK
+
+git_ignore:
+  standardized_exams_ignored: true
+  status_ignored_output: "!! datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/"
+  source_files_added_to_git: false
+
+task_state_result:
+  EXAM-CLEAN-008: READY_TO_RETRY
+  EXAM-CLEAN-008B: DONE
+  next_task: EXAM-CLEAN-008
+  EXAM-CLEAN-009_advanced: false
+
+outputs:
+  verification_note: workflow/cleaning/EXAM-CLEAN-008B_SOURCE_PLACEMENT_VERIFICATION.md
+  run_state: workflow/runs/EXAM-CLEAN-008B_RUN_STATE.yaml
+  closeout: workflow/Task_Closeouts/EXAM-CLEAN-008B_Closeout.md
+
+validation:
+  status: PASS
+  checks:
+    - command: git status --short --branch
+      result: "PASS; branch task-exam-clean-008b-manual-source-placement-verification with expected workflow edits only"
+    - command: python3 -m json.tool workflow/TASK_STATE.json >/dev/null
+      result: PASS
+    - command: test -f checks for the six target Word files
+      result: PASS; all six target files returned OK
+    - command: find datasets/2026_quyixian_english/_STANDARDIZED_EXAMS -iname "*.docx" | sort
+      result: PASS; standardized Word tree is present and includes the six target files
+    - command: python3 zipfile check for size > 0 and word/document.xml
+      result: PASS; all six target files are non-empty docx zip containers with word/document.xml
+    - command: git status --ignored --short | grep "_STANDARDIZED_EXAMS" || true
+      result: "PASS; returned !! datasets/2026_quyixian_english/_STANDARDIZED_EXAMS/"
+    - command: grep -n "EXAM-CLEAN-008B\\|EXAM-CLEAN-008" workflow/TASK_INDEX.md workflow/TASK_STATE.json
+      result: PASS; EXAM-CLEAN-008 is READY_TO_RETRY, EXAM-CLEAN-008B is DONE, current/next task remains EXAM-CLEAN-008
+    - command: git diff --check
+      result: PASS
+
+handoff:
+  status: ready_to_retry_parent_task
+  next_action: rerun EXAM-CLEAN-008 writing extraction with source trace and manual-review boundaries
+  blockers: []
