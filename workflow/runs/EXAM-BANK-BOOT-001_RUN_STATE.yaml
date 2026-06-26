@@ -1,0 +1,74 @@
+run_id: RUN-20260625-EXAM-BANK-BOOT-001
+phase: "Phase 2 / EXAM-BANK"
+current_task: EXAM-BANK-BOOT-001
+task_title: "Phase 2 路线图与任务索引入壳"
+status: complete
+branch: task-exam-bank-boot-001-phase2-roadmap
+dataset: datasets/2026_quyixian_english
+work_unit: phase_bootstrap
+input_scope:
+  summary: "Add Phase 2 roadmap, task index entries, and task-state pointer only."
+  files:
+    - workflow/context/WORKFLOW_OVERVIEW.md
+    - workflow/context/OPERATING_RULES.md
+    - workflow/context/PHASE_0_HARNESS.md
+    - workflow/context/PHASE_1_EXAM_CLEANING.md
+    - workflow/agents/AGENTS.md
+    - workflow/TASK_INDEX.md
+    - workflow/TASK_STATE.json
+    - workflow/templates/TASK_CARD_TEMPLATE.md
+    - workflow/templates/RUN_STATE_TEMPLATE.yaml
+    - workflow/templates/TASK_CLOSEOUT_TEMPLATE.md
+  boundaries:
+    - "No question extraction."
+    - "No existing question-bank record edits."
+    - "No existing export edits."
+    - "No query, builder, or export implementation."
+output_scope:
+  summary: "Phase 2 roadmap and state shell landed."
+  files:
+    - workflow/context/PHASE_2_EXAM_BANK.md
+    - workflow/runs/EXAM-BANK-BOOT-001_RUN_STATE.yaml
+    - workflow/Task_Closeouts/EXAM-BANK-BOOT-001_Closeout.md
+    - workflow/templates/EXAM_BANK_TASK_CARD_TEMPLATE.md
+    - workflow/context/WORKFLOW_OVERVIEW.md
+    - workflow/TASK_INDEX.md
+    - workflow/TASK_STATE.json
+validation:
+  status: pending_closeout_record
+  checks:
+    - command: "python3 -m json.tool workflow/TASK_STATE.json >/dev/null"
+      result: pending
+      evidence: "Record final command output in closeout."
+    - command: "grep -n \"EXAM-BANK-BOOT-001\\|EXAM-BANK-CORE-001\\|Phase 2J\\|INGEST\" workflow/TASK_INDEX.md workflow/context/PHASE_2_EXAM_BANK.md workflow/TASK_STATE.json workflow/context/WORKFLOW_OVERVIEW.md"
+      result: pending
+      evidence: "Record final command output in closeout."
+    - command: "test -f workflow/context/PHASE_2_EXAM_BANK.md"
+      result: pending
+      evidence: "Record final command output in closeout."
+    - command: "test -f workflow/runs/EXAM-BANK-BOOT-001_RUN_STATE.yaml"
+      result: pending
+      evidence: "Record final command output in closeout."
+    - command: "test -f workflow/Task_Closeouts/EXAM-BANK-BOOT-001_Closeout.md"
+      result: pending
+      evidence: "Record final command output in closeout."
+    - command: "git diff --check"
+      result: pending
+      evidence: "Record final command output in closeout."
+    - command: "git status --short --branch"
+      result: pending
+      evidence: "Record final command output in closeout."
+manual_review_points:
+  - "Confirm Phase 2A through Phase 2J task list matches roadmap request."
+decisions:
+  - "EXAM-BANK-CORE-001 is the next active task."
+  - "Phase 3 remains a future placeholder only."
+handoff:
+  status: ready_for_next_task
+  summary: "Phase 2 roadmap shell is complete; no dataset records or exports were modified."
+  next_action: "Start EXAM-BANK-CORE-001."
+  blockers: []
+  files_to_read_next:
+    - workflow/TASK_STATE.json
+    - workflow/TASK_INDEX.md
+    - workflow/context/PHASE_2_EXAM_BANK.md

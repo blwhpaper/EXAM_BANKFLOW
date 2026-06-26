@@ -6,20 +6,22 @@ The goal of `EXAM_BANKFLOW` is to organize raw exam materials into auditable, re
 
 ## Current Stage
 
-Current stage: `Phase 0 Harness & Context Engineering`.
+Current stage: `Phase 2 / EXAM-BANK`.
 
-This phase establishes the lightweight operating layer for future work:
+Phase 0 / EXAM-HARNESS is complete and remains the governance shell. Phase 1 / EXAM-CLEAN is complete for `EXAM-CLEAN-001` through `EXAM-CLEAN-015`; its outputs are the first cleaned sample records, exports, validation checks, and review package. Phase 1 did not create a complete searchable exam-bank system.
 
-- context files that define boundaries and phase intent
-- task/state files that act as the single source of truth
-- run-state and handoff templates for durable execution records
-- agent routing notes and closeout discipline
+Phase 2 builds that system: a searchable, selectable, and exportable Gaokao English question bank with auditable source trace, release status, query surfaces, set builders, export packs, and a future incremental ingest path for newly added questions.
 
-## Next Stage
+## Active Pointer
 
-Next stage: `Phase 1 Exam Cleaning Pipeline`.
+- current phase: `Phase 2 / EXAM-BANK`
+- current task: `EXAM-BANK-CORE-001`
+- next task: `EXAM-BANK-CORE-001`
+- Phase 2 roadmap: `workflow/context/PHASE_2_EXAM_BANK.md`
 
-Phase 1 will use the Phase 0 harness to process raw exam files through identification, normalization, extraction, structuring, review, and acceptance steps.
+## Future Stage
+
+Phase 3 is reserved as a future operations/productization placeholder after Phase 2 is accepted. Phase 3 tasks are not expanded into the executable queue in the current workflow.
 
 ## Out Of Scope
 
