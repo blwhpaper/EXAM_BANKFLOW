@@ -77,6 +77,18 @@ python3 workflow/validation/validate_structured_question_bank.py \
 
 `validate_structured_question_bank.py` checks JSONL parseability, unique `question_id`, required structured-ingest fields, non-empty answers, reading passage/block trace retention, `options: null` for writing records, manual-review counts, and input/output record-count reconciliation against the EXAM-CLEAN-006 and EXAM-CLEAN-008 source slices.
 
+### EXAM-CLEAN-011 Markdown Summary Export
+
+Run this validator when the EXAM-CLEAN-010 structured question-bank JSONL is exported into the markdown review surface:
+
+```sh
+python3 workflow/validation/validate_markdown_summary_export.py \
+  workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl \
+  workflow/exports/EXAM-CLEAN-011_QUESTION_BANK_SUMMARY.md
+```
+
+`validate_markdown_summary_export.py` checks JSONL parseability, summary markdown existence, record-count reconciliation, per-record `question_id` presence, reading/writing distribution consistency, manual-review count consistency, and preservation of answer-alignment-visible plus source-trace-visible fields in the markdown export.
+
 ## Minimum Current Stage
 
 For EXAM-HARNESS-004, use `workflow/validation/MINIMUM_VALIDATION_COMMANDS.md` as the current executable validation surface. Any item that cannot yet be automated must be recorded as `MANUAL_CHECK` in the task closeout or review checklist.

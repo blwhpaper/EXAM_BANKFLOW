@@ -74,6 +74,14 @@ For the structured question-bank slice, run:
 python3 workflow/validation/validate_structured_question_bank.py workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl
 ```
 
+## EXAM-CLEAN-011 Markdown Summary Export
+
+For the markdown summary export, run:
+
+```sh
+python3 workflow/validation/validate_markdown_summary_export.py workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl workflow/exports/EXAM-CLEAN-011_QUESTION_BANK_SUMMARY.md
+```
+
 ## Basic Grep Checks
 
 Check that agent rules contain the required execution and safety language:
