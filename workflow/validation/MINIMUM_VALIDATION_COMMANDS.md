@@ -66,6 +66,14 @@ For mixed reading/writing question-record answer audits, run:
 python3 workflow/validation/validate_answer_alignment.py workflow/records/EXAM-CLEAN-006_QUESTION_RECORDS_SLICE.jsonl workflow/records/EXAM-CLEAN-008_QUESTION_RECORDS_SLICE.jsonl
 ```
 
+## EXAM-CLEAN-010 Structured Data Ingest
+
+For the structured question-bank slice, run:
+
+```sh
+python3 workflow/validation/validate_structured_question_bank.py workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl
+```
+
 ## Basic Grep Checks
 
 Check that agent rules contain the required execution and safety language:

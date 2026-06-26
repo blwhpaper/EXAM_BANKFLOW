@@ -66,6 +66,17 @@ python3 workflow/validation/validate_answer_alignment.py \
 
 `validate_answer_alignment.py` checks that objective questions use source-backed label answers, subjective questions use source-backed answer objects, READY/confirmed records keep answer-source locators, and unresolved answer states are explicitly routed to manual review instead of silent placeholders.
 
+### EXAM-CLEAN-010 Structured Data Ingest
+
+Run this validator when EXAM-CLEAN-006 and EXAM-CLEAN-008 are merged into the structured question-bank slice:
+
+```sh
+python3 workflow/validation/validate_structured_question_bank.py \
+  workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl
+```
+
+`validate_structured_question_bank.py` checks JSONL parseability, unique `question_id`, required structured-ingest fields, non-empty answers, reading passage/block trace retention, `options: null` for writing records, manual-review counts, and input/output record-count reconciliation against the EXAM-CLEAN-006 and EXAM-CLEAN-008 source slices.
+
 ## Minimum Current Stage
 
 For EXAM-HARNESS-004, use `workflow/validation/MINIMUM_VALIDATION_COMMANDS.md` as the current executable validation surface. Any item that cannot yet be automated must be recorded as `MANUAL_CHECK` in the task closeout or review checklist.

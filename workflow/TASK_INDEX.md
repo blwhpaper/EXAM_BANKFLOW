@@ -35,7 +35,7 @@
 | EXAM-CLEAN-008B | manual source placement verification | DONE |
 | EXAM-CLEAN-008C | post-retry task pointer repair | DONE |
 | EXAM-CLEAN-009 | 答案对齐 | DONE |
-| EXAM-CLEAN-010 | 结构化数据入库 | TODO |
+| EXAM-CLEAN-010 | 结构化数据入库 | DONE |
 | EXAM-CLEAN-011 | Markdown 汇总导出 | TODO |
 | EXAM-CLEAN-012 | Word 汇总导出 | TODO |
 | EXAM-CLEAN-013 | HTML 本地题库 | TODO |
