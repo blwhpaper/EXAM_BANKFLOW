@@ -82,6 +82,14 @@ For the markdown summary export, run:
 python3 workflow/validation/validate_markdown_summary_export.py workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl workflow/exports/EXAM-CLEAN-011_QUESTION_BANK_SUMMARY.md
 ```
 
+## EXAM-CLEAN-012 Word Summary Export
+
+For the Word summary export, run:
+
+```sh
+python3 workflow/validation/validate_word_summary_export.py workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl workflow/exports/EXAM-CLEAN-012_QUESTION_BANK_SUMMARY.docx
+```
+
 ## Basic Grep Checks
 
 Check that agent rules contain the required execution and safety language:
