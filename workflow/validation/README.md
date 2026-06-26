@@ -101,6 +101,18 @@ python3 workflow/validation/validate_word_summary_export.py \
 
 `validate_word_summary_export.py` checks JSONL parseability, fixed 8-record input scope, docx existence, non-empty real-docx readability through `python-docx`, task-id marker presence, per-record marker presence, reading/writing distribution summary, preservation of reading A-D options plus confirmed answers, preservation of writing prompts plus confirmed-answer prose, and a manual-review flag reminder for human readability checks.
 
+### EXAM-CLEAN-013 Manual Review QA
+
+Run this validator when the EXAM-CLEAN-010 structured question-bank JSONL is audited into the EXAM-CLEAN-013 human-review record:
+
+```sh
+python3 workflow/validation/validate_manual_review_qa.py \
+  workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl \
+  workflow/cleaning/EXAM-CLEAN-013_MANUAL_REVIEW_QA.md
+```
+
+`validate_manual_review_qa.py` checks JSONL parseability, fixed 8-record input scope, QA markdown existence, full 8-record `record_id` coverage, reading/writing distribution consistency, per-record `qa_status` presence, allowed `qa_status` enums (`PASS`, `WARN`, `NEEDS_REVIEW`), and per-record `question_type` plus `source_trace_status` consistency against the structured JSONL.
+
 ## Minimum Current Stage
 
 For EXAM-HARNESS-004, use `workflow/validation/MINIMUM_VALIDATION_COMMANDS.md` as the current executable validation surface. Any item that cannot yet be automated must be recorded as `MANUAL_CHECK` in the task closeout or review checklist.
