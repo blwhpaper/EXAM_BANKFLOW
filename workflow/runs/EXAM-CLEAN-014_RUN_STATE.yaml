@@ -1,0 +1,35 @@
+current_task: EXAM-CLEAN-014
+task_title: Excel 总索引
+input_scope:
+  structured_question_bank: workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl
+  markdown_export: workflow/exports/EXAM-CLEAN-011_QUESTION_BANK_SUMMARY.md
+  word_export: workflow/exports/EXAM-CLEAN-012_QUESTION_BANK_SUMMARY.docx
+  manual_review_qa: workflow/cleaning/EXAM-CLEAN-013_MANUAL_REVIEW_QA.md
+  expected_record_count: 8
+  expected_distribution:
+    reading: 3
+    writing: 5
+output_scope:
+  excel_index: workflow/exports/EXAM-CLEAN-014_QUESTION_BANK_INDEX.xlsx
+  task_note: workflow/cleaning/EXAM-CLEAN-014_EXCEL_INDEX.md
+  validator: workflow/validation/validate_excel_index.py
+  closeout: workflow/Task_Closeouts/EXAM-CLEAN-014_Closeout.md
+validation:
+  task_state_json_readable: pass
+  structured_question_bank_validator: pass
+  markdown_summary_validator: pass
+  word_summary_validator: pass
+  manual_review_qa_validator: pass
+  excel_index_validator: pass
+  git_diff_check: pass
+excel_index:
+  status: complete
+  indexed_records: 8
+  reading_records: 3
+  writing_records: 5
+  git_add_force_required: true
+  structured_data_modified: false
+handoff:
+  next_task: EXAM-CLEAN-015
+  next_task_status: TODO
+  note: EXAM-CLEAN-014 adds a retrieval/review Excel surface only and leaves all upstream structured/export content unchanged.

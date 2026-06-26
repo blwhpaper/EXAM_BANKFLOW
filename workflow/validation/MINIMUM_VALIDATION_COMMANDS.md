@@ -98,6 +98,14 @@ For the manual review QA layer, run:
 python3 workflow/validation/validate_manual_review_qa.py workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl workflow/cleaning/EXAM-CLEAN-013_MANUAL_REVIEW_QA.md
 ```
 
+## EXAM-CLEAN-014 Excel Index
+
+For the Excel total index, run:
+
+```sh
+python3 workflow/validation/validate_excel_index.py workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl workflow/exports/EXAM-CLEAN-014_QUESTION_BANK_INDEX.xlsx
+```
+
 ## Basic Grep Checks
 
 Check that agent rules contain the required execution and safety language:
