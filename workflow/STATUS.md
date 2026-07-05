@@ -12,7 +12,7 @@ _Last updated: 2026-06-29_
 | EXAM-CLEAN-004_READING_BLOCKS.jsonl | 2 | E001, E002 | Reading-block format, 11 fields |
 | EXAM-CLEAN-006_QUESTION_RECORDS_SLICE.jsonl | 3 | E001 | Slice task format, 30 fields |
 | EXAM-CLEAN-008_QUESTION_RECORDS_SLICE.jsonl | 5 | E001, E002, E010 | Slice task format, 29 fields |
-| **EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl** | **8** | **E001, E002, E010** | **主文件 — 最新 schema，记录数最多** |
+| **EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl** | **2383** | **E001–E054（除PDF-only外）** | **主文件 — 最新 schema，含七选五专项补录** |
 
 **主文件判断依据：** EXAM-CLEAN-010 是最新命名版本、记录数最多（8条）、字段包含 `record_schema_version`、`ingest_task_id`、`source_slice_task_id` 等完整溯源链字段。
 
@@ -92,5 +92,5 @@ _Updated: 2026-06-29_
 - 标准化文件夹总数：**51**
 - 已写入 JSONL（结构化完成）：**45**（E001–E054，除以下6份外）
 - PDF-only 无法提取（需人工处理）：**E003, E007, E026, E032, E034, E037**
-- EXAM-CLEAN-010 总记录数：**2,238 条**
+- EXAM-CLEAN-010 总记录数：**2,383 条**（含七选五补录 +145）
 - E024：Q文件内容稀少（仅2条），需人工补充
