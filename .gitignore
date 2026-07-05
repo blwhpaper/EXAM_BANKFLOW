@@ -17,3 +17,6 @@ __pycache__/
 
 # external reference repos
 _reference_repos/
+_reference_repos/
+datasets/_ORIGINAL_ZIPS/
+datasets/_ORIGINAL_EXTRACTED/
