@@ -371,6 +371,8 @@ def main():
     parser.add_argument("--strategy", help="按 strategy 过滤（完形填空细分模式）")
     parser.add_argument("--method",   help="按 solution_methods 过滤（七选五细分模式）")
     parser.add_argument("--limit",    type=int, help="最多输出 N 道题")
+    parser.add_argument("--include-no-answer", action="store_true",
+                        help="包含 answer=null 的记录（默认只输出有答案的）")
     args = parser.parse_args()
 
     records = load_records(JSONL_PATH)
@@ -389,6 +391,13 @@ def main():
     skipped = before - len(records)
     if skipped:
         print(f"跳过脏数据：{skipped} 条")
+
+    if not args.include_no_answer:
+        before_ans = len(records)
+        records = [r for r in records if r.get("answer")]
+        skipped_ans = before_ans - len(records)
+        if skipped_ans:
+            print(f"跳过无答案记录：{skipped_ans} 条（用 --include-no-answer 关闭过滤）")
 
     if args.subtype:
         records = [r for r in records if r.get("question_subtype") == args.subtype]
