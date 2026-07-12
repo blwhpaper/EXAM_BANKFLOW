@@ -24,8 +24,10 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 JSONL_PATH   = PROJECT_ROOT / "workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl"
 EXAMS_ROOT   = PROJECT_ROOT / "datasets/2026_quyixian_english/_STANDARDIZED_EXAMS"
 
-# 匹配 "21. D。..." 或 "36. G。..."（七选五 A-G）或 "21．D．..." 等
-_ANSWER_LINE = re.compile(r'^(\d{1,2})[\.．]\s*([A-G])[。．\s]')
+# 格式一：逐题解析，如 "21. D。细节理解题..."
+_ANSWER_LINE  = re.compile(r'^(\d{1,2})[\.．]\s*([A-G])[。．\s]')
+# 格式二：范围+连续字母，如 "21-23 DAD" 或 "21——25 BDDCA"
+_ANSWER_RANGE = re.compile(r'(\d+)[——\-–—]+(\d+)\s+([A-G]{2,})')
 
 
 def find_answer_file(exam_dir: Path) -> Path | None:
@@ -52,12 +54,24 @@ def extract_answers(docx_path: Path) -> dict[int, str]:
         t = para.text.strip()
         if not t:
             continue
+        # 格式一：逐题解析 "21. D。..."
         m = _ANSWER_LINE.match(t)
         if m:
             qnum = int(m.group(1))
-            letter = m.group(2).upper()
-            if qnum not in answers:  # 优先保留第一次出现
-                answers[qnum] = letter
+            if qnum not in answers:
+                answers[qnum] = m.group(2).upper()
+            continue
+
+        # 格式二：范围+连续字母，一行可能包含多段（用 finditer 全段扫）
+        # 例："21-23 DAD\t24-27 DDBC28-31 BDBD  32-35 BCCA36-40 BDAGF"
+        for m2 in _ANSWER_RANGE.finditer(t):
+            start, end = int(m2.group(1)), int(m2.group(2))
+            letters = m2.group(3).upper()
+            for i, letter in enumerate(letters):
+                qnum = start + i
+                if qnum not in answers and qnum <= end:
+                    answers[qnum] = letter
+
     return answers
 
 
