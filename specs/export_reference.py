@@ -317,7 +317,12 @@ def build_7to5_doc(groups: dict, method: str | None = None) -> Document:
       passage_text → A-G 选项池 → 答案汇总块
 
     细分模式（有 method 筛选）：
-      每题 question_text 上下文行 + A-G 选项池（每组共享一份）→ 答案汇总块
+      按段落块输出，同一 para_index 的题合并为一个 block：
+      - 该题所在段是全篇第一个有空白的段（para_index == first_blank_para）：
+          输出 paras[0..N]（含前文上下文）→ A-G 选项池 → 标注行
+      - 否则：只输出 paras[N]（该段即可）→ A-G 选项池 → 标注行
+      标注行格式：▶ 题号【method1·method2】  题号【method】
+      末尾统一答案汇总块（仅含 method 命中的题）
     """
     doc        = make_document()
     first_unit = True

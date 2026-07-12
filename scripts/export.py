@@ -19,6 +19,7 @@ scripts/export.py — 统一导出入口
 
 import argparse
 import json
+import re
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -47,6 +48,7 @@ TAB_STOPS   = [2200, 4400, 6600]  # 选项列位置（DXA），B/C/D 跳转点
 
 JSONL_PATH  = Path("/Volumes/KIOXIA_1TB/01_PROJECTS/EXAM_BANKFLOW/"
                    "workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl")
+QNUM_RE = re.compile(r"\d+")
 
 
 # ── 工具函数 ──────────────────────────────────────────────────────────────────
@@ -138,7 +140,7 @@ def add_answer_para(doc, answer):
 
 def add_answer_block(doc, records):
     """整篇模式：在文章单元末尾输出答案汇总块，每5题一行。"""
-    sorted_recs = sorted(records, key=lambda r: int(r.get("source_question_number") or 0))
+    sorted_recs = sorted(records, key=lambda r: parse_qnum(r.get("source_question_number")))
 
     # 空行
     spacer = doc.add_paragraph()
@@ -153,7 +155,7 @@ def add_answer_block(doc, records):
     # 每5题一行
     for i in range(0, len(sorted_recs), 5):
         chunk = sorted_recs[i:i + 5]
-        nums = [int(r.get("source_question_number") or 0) for r in chunk]
+        nums = [parse_qnum(r.get("source_question_number")) for r in chunk]
         answers = [
             (r.get("answer") or "").strip() or "_"
             for r in chunk
@@ -198,6 +200,11 @@ def make_document():
 def load_records(path: Path) -> list:
     with open(path, encoding="utf-8") as f:
         return [json.loads(l) for l in f if l.strip()]
+
+
+def parse_qnum(value) -> int:
+    match = QNUM_RE.search(str(value or ""))
+    return int(match.group()) if match else 0
 
 
 def build_cloze_doc(groups: dict, subtype: str | None, strategy: str | None) -> Document:
@@ -260,13 +267,102 @@ def add_7to5_options_block(doc, options):
         make_run(para, f"{opt['label']}. {opt['text']}")
 
 
-def build_7to5_doc(groups: dict, method: str | None = None) -> Document:
+def split_passage_paragraphs(passage: str) -> list[str]:
+    return [p.strip() for p in (passage or "").split("\n") if p.strip()]
+
+
+def get_7to5_placeholder(rec: dict) -> str:
+    question_text = rec.get("question_text") or ""
+    match = re.search(r"____(\d+)____", question_text)
+    if match:
+        return f"____{match.group(1)}____"
+    qnum = parse_qnum(rec.get("source_question_number"))
+    return f"____{qnum}____" if qnum else ""
+
+
+def find_7to5_para_index(paras: list[str], rec: dict) -> int:
+    placeholder = get_7to5_placeholder(rec)
+    if placeholder:
+        for idx, para in enumerate(paras):
+            if placeholder in para:
+                return idx
+    return max(len(paras) - 1, 0)
+
+
+def add_7to5_marker_line(doc, records: list[dict]):
+    para = doc.add_paragraph()
+    para.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    set_spacing(para, before=0, after=SP_AFTER)
+    chunks = []
+    for rec in sorted(records, key=lambda r: parse_qnum(r.get("source_question_number"))):
+        qnum = parse_qnum(rec.get("source_question_number"))
+        methods = rec.get("solution_methods") or []
+        label = "·".join(methods) if methods else "unlabeled"
+        chunks.append(f"{qnum}【{label}】")
+    make_run(para, "▶ " + "  ".join(chunks), bold=True)
+
+
+def prepare_7to5_method_groups(groups: dict, method: str, limit: int | None):
+    selected_ids: list[str] = []
+    selected_set: set[str] = set()
+    expanded_groups: dict[tuple, list] = {}
+
+    for key in sorted(groups):
+        group_records = groups[key]
+        paras = split_passage_paragraphs(group_records[0].get("passage_text", ""))
+        para_map: dict[int, list[dict]] = defaultdict(list)
+        for rec in group_records:
+            para_index = find_7to5_para_index(paras, rec)
+            rec["_export_para_index"] = para_index
+            para_map[para_index].append(rec)
+
+        matched = [
+            rec for rec in group_records
+            if method in (rec.get("solution_methods") or [])
+        ]
+        matched.sort(key=lambda r: parse_qnum(r.get("source_question_number")))
+
+        included_ids: set[str] = set()
+        for rec in matched:
+            rec_id = rec.get("question_id") or f"{key}-{rec.get('source_question_number')}"
+            if limit is not None and len(selected_ids) >= limit:
+                break
+            selected_ids.append(rec_id)
+            selected_set.add(rec_id)
+            para_index = rec["_export_para_index"]
+            for block_rec in para_map.get(para_index, []):
+                block_id = block_rec.get("question_id") or f"{key}-{block_rec.get('source_question_number')}"
+                included_ids.add(block_id)
+
+        expanded = [
+            rec for rec in group_records
+            if (rec.get("question_id") or f"{key}-{rec.get('source_question_number')}") in included_ids
+        ]
+        expanded.sort(key=lambda r: (r["_export_para_index"], parse_qnum(r.get("source_question_number"))))
+        if expanded:
+            expanded_groups[key] = expanded
+
+        if limit is not None and len(selected_ids) >= limit:
+            # limit applies to method-matched questions; later groups are ignored
+            break
+
+    answer_records = []
+    for key in sorted(expanded_groups):
+        for rec in expanded_groups[key]:
+            rec_id = rec.get("question_id") or f"{key}-{rec.get('source_question_number')}"
+            if rec_id in selected_set:
+                answer_records.append(rec)
+
+    return expanded_groups, answer_records
+
+
+def build_7to5_doc(groups: dict, method: str | None = None, answer_records: list[dict] | None = None) -> Document:
     """
     整篇模式（无 method 筛选）：
       passage_text → A-G 选项池 → 答案汇总块
 
     细分模式（有 method 筛选）：
-      每题一个块：question_text → A-G 选项池 → 空行；末尾统一答案汇总块
+      按段落块输出：从首段到空格所在段 → A-G 选项池 → 标注行；末尾统一答案汇总块
     """
     doc        = make_document()
     first_unit = True
@@ -281,13 +377,50 @@ def build_7to5_doc(groups: dict, method: str | None = None) -> Document:
         opts = records[0].get("options") or []
 
         if method:
+            paras = split_passage_paragraphs(records[0].get("passage_text", ""))
+            blocks: dict[int, list[dict]] = defaultdict(list)
             for rec in records:
-                ctx = rec.get("question_text", "")
-                add_passage_para(doc, ctx, after=SP_AFTER_PASSAGE)
+                para_index = rec.get("_export_para_index")
+                if para_index is None:
+                    para_index = find_7to5_para_index(paras, rec)
+                blocks[para_index].append(rec)
+
+            sorted_para_indices = sorted(blocks)
+            # 文章中第一个含空白的段落（扫描全篇 passage，与导出集合无关）
+            first_blank_para = next(
+                (i for i, p in enumerate(paras) if re.search(r"____\d+____", p)),
+                0
+            )
+
+            for block_idx, para_index in enumerate(sorted_para_indices):
+                block_records = sorted(
+                    blocks[para_index],
+                    key=lambda r: parse_qnum(r.get("source_question_number"))
+                )
+                if paras:
+                    # 该题所在段是文章第一个空白段：输出 paras[0..N]（需要前文上下文）
+                    # 否则：只输出 paras[N]（该段即可）
+                    if para_index == first_blank_para:
+                        for idx in range(para_index + 1):
+                            after = SP_AFTER if idx < para_index else 0
+                            add_passage_para(doc, paras[idx], after=after)
+                    else:
+                        add_passage_para(doc, paras[para_index], after=0)
+                else:
+                    add_passage_para(doc, f"[{exam_id} 文章原文缺失]", after=0)
+
+                spacer = doc.add_paragraph()
+                set_spacing(spacer, before=0, after=0)
                 if opts:
                     add_7to5_options_block(doc, opts)
+
                 spacer = doc.add_paragraph()
-                set_spacing(spacer, before=0, after=SP_AFTER_PASSAGE)
+                set_spacing(spacer, before=0, after=0)
+                add_7to5_marker_line(doc, block_records)
+
+                if block_idx != len(blocks) - 1:
+                    spacer = doc.add_paragraph()
+                    set_spacing(spacer, before=0, after=SP_AFTER_PASSAGE)
         else:
             passage = records[0].get("passage_text", "")
             if passage:
@@ -301,7 +434,14 @@ def build_7to5_doc(groups: dict, method: str | None = None) -> Document:
             if opts:
                 add_7to5_options_block(doc, opts)
 
-        add_answer_block(doc, records)
+        if method and answer_records is not None:
+            group_answers = [
+                rec for rec in answer_records
+                if rec["exam_id"] == exam_id and rec.get("source_file", "") == source_file
+            ]
+            add_answer_block(doc, group_answers)
+        else:
+            add_answer_block(doc, records)
 
     return doc
 
@@ -316,6 +456,7 @@ def build_reading_doc(groups: dict, subtype: str | None = None) -> Document:
     """
     doc = make_document()
     first_unit = True
+    global_subtypes = {"main_idea_global", "main_idea_title"}
 
     for (exam_id, source_file), records in sorted(groups.items()):
         if subtype:
@@ -329,6 +470,21 @@ def build_reading_doc(groups: dict, subtype: str | None = None) -> Document:
 
         if subtype:
             for idx, rec in enumerate(records):
+                if subtype in global_subtypes:
+                    context = rec.get("passage_text", "")
+                    if context:
+                        paras = [p for p in context.split("\n") if p.strip()]
+                        for p in paras:
+                            add_passage_para(doc, p, after=SP_AFTER)
+                    else:
+                        add_passage_para(doc, f"[{exam_id} 文章原文缺失]", after=SP_AFTER)
+                else:
+                    excerpt = (rec.get("source_span") or {}).get("excerpt", "")
+                    if excerpt:
+                        add_passage_para(doc, excerpt, after=SP_AFTER)
+
+                spacer = doc.add_paragraph()
+                set_spacing(spacer, before=0, after=SP_AFTER_PASSAGE)
                 add_stem_para(doc, rec["source_question_number"], rec.get("question_text", ""))
                 add_options_para(doc, rec.get("options") or [], has_answer=False)
                 if idx != len(records) - 1:
@@ -389,31 +545,44 @@ def main():
         records = [r for r in records if r.get("question_subtype") == args.subtype]
     if args.strategy:
         records = [r for r in records if r.get("strategy") == args.strategy]
-    if args.method:
-        records = [r for r in records if args.method in (r.get("solution_methods") or [])]
-    if args.limit:
-        records = records[:args.limit]
+
+    method_answer_records = None
+
+    if args.type == "reading_7to5" and args.method:
+        all_groups: dict[tuple, list] = defaultdict(list)
+        for r in records:
+            key = (r["exam_id"], r.get("source_file", ""))
+            all_groups[key].append(r)
+        for key in all_groups:
+            all_groups[key].sort(key=lambda r: parse_qnum(r.get("source_question_number")))
+        groups, method_answer_records = prepare_7to5_method_groups(all_groups, args.method, args.limit)
+        records = [rec for group in groups.values() for rec in group]
+    else:
+        if args.method:
+            records = [r for r in records if args.method in (r.get("solution_methods") or [])]
+        if args.limit:
+            records = records[:args.limit]
+
+        groups: dict[tuple, list] = defaultdict(list)
+        for r in records:
+            key = (r["exam_id"], r.get("source_file", ""))
+            groups[key].append(r)
+        for key in groups:
+            groups[key].sort(key=lambda r: parse_qnum(r.get("source_question_number")))
 
     if not records:
         print(f"没有匹配的记录（type={args.type}, exam={args.exam}）", file=sys.stderr)
         sys.exit(1)
 
-    # 分组 + 排序
-    groups: dict[tuple, list] = defaultdict(list)
-    for r in records:
-        key = (r["exam_id"], r.get("source_file", ""))
-        groups[key].append(r)
-    for key in groups:
-        groups[key].sort(key=lambda r: int(r.get("source_question_number") or 0))
-
-    print(f"共 {len(records)} 条记录，{len(groups)} 个文章单元", flush=True)
+    answer_count = len(method_answer_records) if method_answer_records is not None else len(records)
+    print(f"共 {answer_count} 条目标题目，扩展后 {len(records)} 条记录，{len(groups)} 个文章单元", flush=True)
 
     if args.type == "cloze":
         doc = build_cloze_doc(groups, args.subtype, args.strategy)
     elif args.type == "reading":
         doc = build_reading_doc(groups, subtype=args.subtype)
     else:
-        doc = build_7to5_doc(groups, method=args.method)
+        doc = build_7to5_doc(groups, method=args.method, answer_records=method_answer_records)
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
