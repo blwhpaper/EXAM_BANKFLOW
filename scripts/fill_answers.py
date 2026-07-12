@@ -27,7 +27,7 @@ EXAMS_ROOT   = PROJECT_ROOT / "datasets/2026_quyixian_english/_STANDARDIZED_EXAM
 # 格式一：逐题解析，如 "21. D。细节理解题..."
 _ANSWER_LINE  = re.compile(r'^(\d{1,2})[\.．]\s*([A-G])[。．\s]')
 # 格式二：范围+连续字母，如 "21-23 DAD" 或 "21——25 BDDCA"
-_ANSWER_RANGE = re.compile(r'(\d+)[——\-–—]+(\d+)\s+([A-G]{2,})')
+_ANSWER_RANGE = re.compile(r'(\d+)[——\-–—]+(\d+)[：:\s]+([A-G]{2,})')
 
 
 def find_answer_file(exam_dir: Path) -> Path | None:
