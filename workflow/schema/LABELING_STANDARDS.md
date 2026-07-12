@@ -178,3 +178,14 @@
 | E054 | 同上，passage_text空白为纯数字格式 |
 
 修正方法：在enrich_7to5_passage.py中加规范化步骤，将 `\s{2,}(\d{2})\s{2,}` 替换为 `____\1____`，或手动修正这3个exam的passage_text。
+
+### 阅读理解 source_span.paragraph 指向选项行（需人工修正）
+| exam_id | question_number | 问题描述 |
+|---|---|---|
+| E005 | Q35 | para=222 指向选项行 |
+| E006 | Q35 | para=175 指向选项行 |
+| E021 | Q35 | para=333 指向选项行 |
+| E023 | Q55 | para=198 指向选项行 |
+| E027 | Q34 | para=181 指向选项行 |
+| E043 | Q55 | para=179 指向选项行 |
+| E053 | Q35 | para=169 指向选项行 |
