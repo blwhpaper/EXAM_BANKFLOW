@@ -160,7 +160,7 @@ def add_answer_block(doc, records):
             (r.get("answer") or "").strip() or "_"
             for r in chunk
         ]
-        label = f"{nums[0]}-{nums[-1]}"
+        label = str(nums[0]) if len(nums) == 1 else f"{nums[0]}-{nums[-1]}"
         line_text = f"{label}  " + " ".join(answers)
         para = doc.add_paragraph()
         para.alignment = WD_ALIGN_PARAGRAPH.LEFT
