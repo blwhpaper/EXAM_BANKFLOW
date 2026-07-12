@@ -164,3 +164,17 @@
 | E041 | 同上，paragraph指向阅读理解题位置 |
 
 修正方法：手动查原始docx，找到七选五section的起始paragraph编号，更新JSONL对应记录的source_span.paragraph字段。
+
+### question_text 内容错误
+| question_id | 问题描述 |
+|---|---|
+| e006-7to5-q18 | question_text混入文章标题和正文内容，需重新提取 |
+
+### passage_text 空白格式异常（纯数字，无下划线）
+| exam_id | 问题描述 |
+|---|---|
+| E009 | passage_text空白格式为纯数字（如 `   36   `），缺少下划线，导致段落定位失败；answer全为null |
+| E030 | 同上，passage_text空白为纯数字格式 |
+| E054 | 同上，passage_text空白为纯数字格式 |
+
+修正方法：在enrich_7to5_passage.py中加规范化步骤，将 `\s{2,}(\d{2})\s{2,}` 替换为 `____\1____`，或手动修正这3个exam的passage_text。

@@ -111,7 +111,10 @@ def extract_7to5_passage(docx_path: Path, section_para: int) -> str:
 
         texts.append(t)
 
-    return "\n".join(texts)
+    passage = "\n".join(texts)
+    # 规范化空白格式：把 "  36  " "  36\n" "\n38  " 等转成 "____36____"
+    passage = re.sub(r'(?:^|\s{2,})(\d{1,2})(?!\d)(?=\s{2,}|[ \t]*(?:\n|$))', r'____\1____', passage, flags=re.MULTILINE)
+    return passage
 
 
 def main():
