@@ -42,7 +42,7 @@ LINE_VAL    = 360     # 1.5倍行距
 SP_BEFORE   = 0
 SP_AFTER    = 0
 SP_AFTER_Q  = 200     # 答案行后间距
-SP_AFTER_PASSAGE = 240  # 文章与题目块之间
+SP_AFTER_PASSAGE = 80   # 文章与题目块之间
 
 TAB_STOPS   = [2200, 4400, 6600]  # 选项列位置（DXA），B/C/D 跳转点
 
@@ -98,23 +98,62 @@ def make_run(para, text, bold=False):
     return run
 
 
-def add_passage_para(doc, text, after=SP_AFTER):
+# 完形填空占位符：支持 ____21____ / ___21___ / 空格21空格 三种格式
+_CLOZE_BLANK_RE = re.compile(r'(_{2,}|\s{2,})(\d{2})(_{2,}|\s{2,})')
+
+
+def add_passage_para(doc, text, after=SP_AFTER, underline_word: str | None = None,
+                     cloze_blanks: bool = False):
+    """添加文章段落。
+    underline_word: 词汇题下划线词。
+    cloze_blanks:   完形填空模式，将 '   41   ' 渲染为带下划线的空白+题号。
+    """
     para = doc.add_paragraph()
     para.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     set_spacing(para, before=SP_BEFORE, after=after)
-    make_run(para, text)
+    full_text = "　　" + text  # 首行缩进两个全角空格
+
+    if cloze_blanks and _CLOZE_BLANK_RE.search(full_text):
+        # 按完形空格切分，加下划线
+        pos = 0
+        for m in _CLOZE_BLANK_RE.finditer(full_text):
+            if m.start() > pos:
+                make_run(para, full_text[pos:m.start()])
+            # 渲染为 "______41______"（下划线 run）
+            blank_text = "______" + m.group(2) + "______"
+            r = make_run(para, blank_text)
+            r.underline = True
+            pos = m.end()
+        if pos < len(full_text):
+            make_run(para, full_text[pos:])
+    elif underline_word and underline_word.lower() in full_text.lower():
+        idx = full_text.lower().index(underline_word.lower())
+        before_part = full_text[:idx]
+        word_part   = full_text[idx: idx + len(underline_word)]
+        after_part  = full_text[idx + len(underline_word):]
+        if before_part:
+            make_run(para, before_part)
+        r = make_run(para, word_part)
+        r.underline = True
+        if after_part:
+            make_run(para, after_part)
+    else:
+        make_run(para, full_text)
     return para
 
 
-def add_stem_para(doc, qnum, text):
+def add_stem_para(doc, qnum, text, tag=None):
     para = doc.add_paragraph()
     para.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     set_spacing(para, before=120, after=0)
-    make_run(para, f"{qnum}. {text}")
+    qnum_str = str(qnum).rstrip(".")
+    tag_str = f"【{tag}】" if tag else ""
+    make_run(para, f"{qnum_str}.{tag_str} {text}")
     return para
 
 
 def add_options_para(doc, options, has_answer, qnum=None):
+    """完形填空用：ABCD tab分列，一行输出（选项较短）。"""
     para = doc.add_paragraph()
     para.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     add_tab_stops(para)
@@ -129,6 +168,29 @@ def add_options_para(doc, options, has_answer, qnum=None):
     return para
 
 
+def add_reading_options_paras(doc, options, incomplete=False):
+    """阅读理解用：ABCD 每项单独一行（选项为完整句子）。
+    incomplete=True 时末尾加警告行。"""
+    labels = ["A", "B", "C", "D"]
+    opt_map = {o["label"]: o["text"] for o in options}
+    for lbl in labels:
+        text = opt_map.get(lbl)
+        if text is None:
+            continue
+        para = doc.add_paragraph()
+        para.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        set_spacing(para, before=0, after=0)
+        make_run(para, f"{lbl}. {text}")
+    if incomplete:
+        warn = doc.add_paragraph()
+        warn.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        set_spacing(warn, before=0, after=0)
+        r = warn.add_run("[⚠ 选项不完整，需补充]")
+        r.font.name = FONT_NAME
+        r.font.size = FONT_SIZE
+        r.font.color.rgb = RGBColor(0xFF, 0x00, 0x00)
+
+
 def add_answer_para(doc, answer):
     ans_text = answer.strip() if (answer and answer.strip()) else "待补充"
     para = doc.add_paragraph()
@@ -138,34 +200,40 @@ def add_answer_para(doc, answer):
     return para
 
 
-def add_answer_block(doc, records):
-    """整篇模式：在文章单元末尾输出答案汇总块，每5题一行。"""
+def add_answer_block(doc, records, per_line=False):
+    """
+    答案汇总块。
+    per_line=False（完形/整篇）：每5题一行，如 "21-25  A B C D A"
+    per_line=True （阅读细分）：每题单独一行，如 "4. D"
+    """
     sorted_recs = sorted(records, key=lambda r: parse_qnum(r.get("source_question_number")))
 
-    # 空行
     spacer = doc.add_paragraph()
     set_spacing(spacer, before=0, after=0)
 
-    # 标题行
     title = doc.add_paragraph()
     title.alignment = WD_ALIGN_PARAGRAPH.LEFT
     set_spacing(title, before=0, after=0)
     make_run(title, "【答案】", bold=True)
 
-    # 每5题一行
-    for i in range(0, len(sorted_recs), 5):
-        chunk = sorted_recs[i:i + 5]
-        nums = [parse_qnum(r.get("source_question_number")) for r in chunk]
-        answers = [
-            (r.get("answer") or "").strip() or "_"
-            for r in chunk
-        ]
-        label = str(nums[0]) if len(nums) == 1 else f"{nums[0]}-{nums[-1]}"
-        line_text = f"{label}  " + " ".join(answers)
-        para = doc.add_paragraph()
-        para.alignment = WD_ALIGN_PARAGRAPH.LEFT
-        set_spacing(para, before=0, after=0)
-        make_run(para, line_text, bold=True)
+    if per_line:
+        for r in sorted_recs:
+            num = str(r.get("source_question_number", "")).rstrip(".")
+            ans = (r.get("answer") or "").strip() or "_"
+            para = doc.add_paragraph()
+            para.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            set_spacing(para, before=0, after=0)
+            make_run(para, f"{num}. {ans}", bold=True)
+    else:
+        for i in range(0, len(sorted_recs), 5):
+            chunk = sorted_recs[i:i + 5]
+            nums = [parse_qnum(r.get("source_question_number")) for r in chunk]
+            answers = [(r.get("answer") or "").strip() or "_" for r in chunk]
+            label = str(nums[0]) if len(nums) == 1 else f"{nums[0]}-{nums[-1]}"
+            para = doc.add_paragraph()
+            para.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            set_spacing(para, before=0, after=0)
+            make_run(para, f"{label}  " + " ".join(answers), bold=True)
 
 
 def add_page_break(doc):
@@ -224,7 +292,11 @@ def build_cloze_doc(groups: dict, subtype: str | None, strategy: str | None) -> 
             continue
 
         if not first_unit:
-            add_page_break(doc)
+            if subtype or strategy:
+                sep = doc.add_paragraph()
+                set_spacing(sep, before=0, after=0, line=LINE_VAL)
+            else:
+                add_page_break(doc)
         first_unit = False
 
         use_excerpt = bool(subtype or strategy)
@@ -233,7 +305,7 @@ def build_cloze_doc(groups: dict, subtype: str | None, strategy: str | None) -> 
             # 细分模式：excerpt 上下文 + 选项行（含序号），末尾汇总答案
             for rec in records:
                 excerpt = rec.get("source_span", {}).get("excerpt", rec.get("question_text", ""))
-                add_passage_para(doc, excerpt, after=SP_AFTER_PASSAGE)
+                add_passage_para(doc, excerpt, after=SP_AFTER_PASSAGE, cloze_blanks=True)
                 add_options_para(doc, rec.get("options") or [], has_answer=False,
                                  qnum=rec["source_question_number"])
             add_answer_block(doc, records)
@@ -244,7 +316,7 @@ def build_cloze_doc(groups: dict, subtype: str | None, strategy: str | None) -> 
                 paras = [p for p in passage.split("\n") if p.strip()]
                 for i, p in enumerate(paras):
                     after = SP_AFTER_PASSAGE if i == len(paras) - 1 else SP_AFTER
-                    add_passage_para(doc, p, after=after)
+                    add_passage_para(doc, p, after=after, cloze_blanks=True)
             else:
                 add_passage_para(doc, f"[{exam_id} 文章原文缺失]", after=SP_AFTER_PASSAGE)
 
@@ -271,20 +343,23 @@ def split_passage_paragraphs(passage: str) -> list[str]:
     return [p.strip() for p in (passage or "").split("\n") if p.strip()]
 
 
-def get_7to5_placeholder(rec: dict) -> str:
+def get_7to5_placeholder(rec: dict) -> str | None:
+    """返回该题在 passage_text 中的占位符，支持 ___N___ 和 ____N____ 两种格式。"""
     question_text = rec.get("question_text") or ""
-    match = re.search(r"____(\d+)____", question_text)
+    match = re.search(r"_{3,}(\d+)_{3,}", question_text)
     if match:
-        return f"____{match.group(1)}____"
+        return match.group(0)  # 保留原始格式
     qnum = parse_qnum(rec.get("source_question_number"))
-    return f"____{qnum}____" if qnum else ""
+    return str(qnum) if qnum else None  # 退化：直接用题号字符串匹配
 
 
 def find_7to5_para_index(paras: list[str], rec: dict) -> int:
-    placeholder = get_7to5_placeholder(rec)
-    if placeholder:
+    qnum = parse_qnum(rec.get("source_question_number"))
+    if qnum:
+        # 支持 ___N___ / ____N____ 两种格式（避免 f-string 吃掉 {3,}）
+        pat = re.compile(r"_{3,}" + str(qnum) + r"_{3,}")
         for idx, para in enumerate(paras):
-            if placeholder in para:
+            if pat.search(para):
                 return idx
     return max(len(paras) - 1, 0)
 
@@ -371,7 +446,11 @@ def build_7to5_doc(groups: dict, method: str | None = None, answer_records: list
         if not records:
             continue
         if not first_unit:
-            add_page_break(doc)
+            if method:
+                sep = doc.add_paragraph()
+                set_spacing(sep, before=0, after=0, line=LINE_VAL)
+            else:
+                add_page_break(doc)
         first_unit = False
 
         opts = records[0].get("options") or []
@@ -414,10 +493,6 @@ def build_7to5_doc(groups: dict, method: str | None = None, answer_records: list
                 if opts:
                     add_7to5_options_block(doc, opts)
 
-                spacer = doc.add_paragraph()
-                set_spacing(spacer, before=0, after=0)
-                add_7to5_marker_line(doc, block_records)
-
                 if block_idx != len(blocks) - 1:
                     spacer = doc.add_paragraph()
                     set_spacing(spacer, before=0, after=SP_AFTER_PASSAGE)
@@ -446,13 +521,98 @@ def build_7to5_doc(groups: dict, method: str | None = None, answer_records: list
     return doc
 
 
+_PARA_REF_RE = re.compile(
+    r"paragraph\s+(\d+)"
+    r"|the\s+(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)\s+paragraph"
+    r"|第\s*([一二三四五六七八九十\d]+)\s*段",
+    re.IGNORECASE,
+)
+# 多段：paragraphs N and M / paragraphs N-M / paragraphs N to M
+_PARA_RANGE_RE = re.compile(
+    r"paragraphs?\s+(\d+)\s+(?:and|to|-)\s+(\d+)",
+    re.IGNORECASE,
+)
+_LAST_PARA_RE = re.compile(
+    r"last\s+paragraph|final\s+paragraph|最后[一]?段|末段",
+    re.IGNORECASE,
+)
+# 最后N段：the last two/three/2/3 paragraphs
+_LAST_N_PARA_RE = re.compile(
+    r"last\s+(two|three|four|2|3|4)\s+paragraphs",
+    re.IGNORECASE,
+)
+_LAST_N_MAP = {"two": 2, "three": 3, "four": 4, "2": 2, "3": 3, "4": 4}
+_CN_NUM = {"一":1,"二":2,"三":3,"四":4,"五":5,"六":6,"七":7,"八":8,"九":9,"十":10}
+_EN_ORD = {"first":1,"second":2,"third":3,"fourth":4,"fifth":5,
+           "sixth":6,"seventh":7,"eighth":8,"ninth":9,"tenth":10}
+
+def _para_ref_from_text(question_text: str) -> list[int] | None:
+    """从题目文字中解析明确的段落序号（1-based列表），无法解析返回 None。
+    支持单段（paragraph 4）和多段范围（paragraphs 4 and 5 / paragraphs 4-6）。"""
+    qt = question_text or ""
+    # 先检测多段范围
+    mr = _PARA_RANGE_RE.search(qt)
+    if mr:
+        start, end = int(mr.group(1)), int(mr.group(2))
+        return list(range(min(start, end), max(start, end) + 1))
+    # 单段
+    m = _PARA_REF_RE.search(qt)
+    if not m:
+        return None
+    if m.group(1):
+        return [int(m.group(1))]
+    if m.group(2):
+        n = _EN_ORD.get(m.group(2).lower())
+        return [n] if n else None
+    if m.group(3):
+        s = m.group(3).strip()
+        n = int(s) if s.isdigit() else _CN_NUM.get(s)
+        return [n] if n else None
+    return None
+
+
+_UNDERLINE_TARGET_RE = re.compile(
+    r'(?:underlined\s+(?:word|phrase|expression)\s*["“「]([^"”」]+)["”」]'
+    r'|the\s+(?:word|phrase|expression)\s*["“「]([^"”」]+)["”」])',
+    re.IGNORECASE,
+)
+
+
+def _extract_underline_target(question_text: str) -> str | None:
+    """从题目文字中提取带下划线的目标词/短语，无法解析返回 None。"""
+    m = _UNDERLINE_TARGET_RE.search(question_text or "")
+    if not m:
+        return None
+    return (m.group(1) or m.group(2) or "").strip() or None
+
+
+def _extract_context_paras(passage_text: str, para_index: int | None,
+                           window: int = 2) -> list[str]:
+    """
+    从 passage_text 按段落索引截取上下文（前后 window 段）。
+    para_index 缺失时返回空列表（调用方降级处理）。
+    """
+    if not passage_text or para_index is None:
+        return []
+    try:
+        para_index = int(para_index)
+    except (ValueError, TypeError):
+        return []
+    all_paras = [p for p in passage_text.split("\n") if p.strip()]
+    start = max(0, para_index - window)
+    end   = min(len(all_paras), para_index + window + 1)
+    return all_paras[start:end]
+
+
 def build_reading_doc(groups: dict, subtype: str | None = None) -> Document:
     """
     整篇模式（无 subtype）：
-      passage_text → 空行 → 每题题干/选项 → 答案汇总块
+      passage_text → 空行 → 每题题干/选项（每项单独一行） → 答案汇总块
 
     细分模式（有 subtype）：
-      每题题干/选项 → 题间空行 → 答案汇总块
+      全篇subtype（main_idea_global/title）：完整 passage_text → 题干/选项 → 答案块
+      其他subtype：每题从 passage_text 按 para_index 截取前后2段上下文
+                   → 题干 → 选项（每项单独一行） → 答案汇总块
     """
     doc = make_document()
     first_unit = True
@@ -460,41 +620,70 @@ def build_reading_doc(groups: dict, subtype: str | None = None) -> Document:
 
     for (exam_id, source_file), records in sorted(groups.items()):
         if subtype:
-            records = [r for r in records if r.get("question_subtype") == subtype]
+            records = [r for r in records
+                       if (r.get("question_subtype") or "").startswith(subtype)]
         if not records:
             continue
 
         if not first_unit:
-            add_page_break(doc)
+            if subtype:
+                # 细分模式：exam单元之间空一行，不分页
+                sep = doc.add_paragraph()
+                set_spacing(sep, before=0, after=0, line=LINE_VAL)
+            else:
+                add_page_break(doc)
         first_unit = False
 
+        # 整篇模式用 records[0] 的文章；细分模式每题用自己的 passage_text
+        passage = records[0].get("passage_text", "")
+        passage_paras = [p for p in passage.split("\n") if p.strip()] if passage else []
+
         if subtype:
-            for idx, rec in enumerate(records):
-                if subtype in global_subtypes:
-                    context = rec.get("passage_text", "")
-                    if context:
-                        paras = [p for p in context.split("\n") if p.strip()]
-                        for p in paras:
-                            add_passage_para(doc, p, after=SP_AFTER)
-                    else:
-                        add_passage_para(doc, f"[{exam_id} 文章原文缺失]", after=SP_AFTER)
+            # 细分模式：每题用自己的 passage_text
+            for idx_rec, rec in enumerate(records):
+                # 题与题之间空一行
+                if idx_rec > 0:
+                    sep = doc.add_paragraph()
+                    set_spacing(sep, before=0, after=0, line=LINE_VAL)
+
+                opts = rec.get("options") or []
+                incomplete = len(opts) < 4
+                qt = rec.get("question_text", "")
+                ref = _para_ref_from_text(qt)
+                is_last = bool(_LAST_PARA_RE.search(qt or ""))
+                last_n_m = _LAST_N_PARA_RE.search(qt or "")
+                last_n = _LAST_N_MAP.get(last_n_m.group(1).lower()) if last_n_m else None
+                underline_word = _extract_underline_target(qt)
+
+                rec_passage = rec.get("passage_text", "")
+                rec_paras = [p for p in rec_passage.split("\n") if p.strip()] if rec_passage else []
+
+                def _add_paras(paras):
+                    for p in paras:
+                        uw = underline_word if (underline_word and underline_word.lower() in p.lower()) else None
+                        add_passage_para(doc, p, after=SP_AFTER, underline_word=uw)
+
+                if last_n and rec_paras:
+                    _add_paras(rec_paras[-last_n:])
+                elif is_last and rec_paras:
+                    _add_paras([rec_paras[-1]])
+                elif ref is not None and rec_paras:
+                    # ref 是1-based段落号列表（单段或多段）
+                    selected = [rec_paras[i - 1] for i in ref if 0 < i <= len(rec_paras)]
+                    _add_paras(selected if selected else rec_paras)  # 越界时降级为全文
+                elif rec_paras:
+                    _add_paras(rec_paras)
                 else:
-                    excerpt = (rec.get("source_span") or {}).get("excerpt", "")
-                    if excerpt:
-                        add_passage_para(doc, excerpt, after=SP_AFTER)
+                    add_passage_para(doc, f"[{exam_id} 文章原文缺失]", after=SP_AFTER)
 
                 spacer = doc.add_paragraph()
                 set_spacing(spacer, before=0, after=SP_AFTER_PASSAGE)
-                add_stem_para(doc, rec["source_question_number"], rec.get("question_text", ""))
-                add_options_para(doc, rec.get("options") or [], has_answer=False)
-                if idx != len(records) - 1:
-                    spacer = doc.add_paragraph()
-                    set_spacing(spacer, before=0, after=SP_AFTER_PASSAGE)
+                add_stem_para(doc, rec["source_question_number"], qt)
+                add_reading_options_paras(doc, opts, incomplete=incomplete)
         else:
-            passage = records[0].get("passage_text", "")
-            if passage:
-                paras = [p for p in passage.split("\n") if p.strip()]
-                for p in paras:
+            # 整篇模式：全文出一次，所有题目跟在后面
+            if passage_paras:
+                for p in passage_paras:
                     add_passage_para(doc, p, after=SP_AFTER)
             else:
                 add_passage_para(doc, f"[{exam_id} 文章原文缺失]", after=SP_AFTER)
@@ -503,10 +692,11 @@ def build_reading_doc(groups: dict, subtype: str | None = None) -> Document:
             set_spacing(spacer, before=0, after=SP_AFTER_PASSAGE)
 
             for rec in records:
+                opts = rec.get("options") or []
                 add_stem_para(doc, rec["source_question_number"], rec.get("question_text", ""))
-                add_options_para(doc, rec.get("options") or [], has_answer=False)
+                add_reading_options_paras(doc, opts, incomplete=len(opts) < 4)
 
-        add_answer_block(doc, records)
+        add_answer_block(doc, records, per_line=bool(subtype))
 
     return doc
 
@@ -551,7 +741,9 @@ def main():
             print(f"跳过无答案记录：{skipped_ans} 条（用 --include-no-answer 关闭过滤）")
 
     if args.subtype:
-        records = [r for r in records if r.get("question_subtype") == args.subtype]
+        # 前缀匹配：--subtype inference 匹配 inference_contrast / inference_logic 等
+        records = [r for r in records
+                   if (r.get("question_subtype") or "").startswith(args.subtype)]
     if args.strategy:
         records = [r for r in records if r.get("strategy") == args.strategy]
 
