@@ -46,8 +46,7 @@ SP_AFTER_PASSAGE = 80   # 文章与题目块之间
 
 TAB_STOPS   = [2200, 4400, 6600]  # 选项列位置（DXA），B/C/D 跳转点
 
-JSONL_PATH  = Path("/Volumes/KIOXIA_1TB/01_PROJECTS/EXAM_BANKFLOW/"
-                   "workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl")
+JSONL_PATH  = Path(__file__).resolve().parent.parent / "workflow/records/EXAM-CLEAN-010_STRUCTURED_QUESTION_BANK.jsonl"
 QNUM_RE = re.compile(r"\d+")
 
 
